@@ -9,7 +9,7 @@ namespace pomar
   class Image2DAdjacencyRelationByTranslating: public AdjacencyRelation
   {
   public:
-    static const int NoAdjacentIndex = -1;
+    static const int NoAdjacentIndex;
     
     Image2DAdjacencyRelationByTranslating(int width, int height, const std::vector<int>& dx, const std::vector<int>& dy);
     Image2DAdjacencyRelationByTranslating(int width, int height, std::initializer_list<int> _dx, std::initializer_list<int> dy);

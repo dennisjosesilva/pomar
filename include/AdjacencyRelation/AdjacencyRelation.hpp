@@ -1,4 +1,5 @@
-#include <vector.h>
+#include <vector>
+#include <cstddef>
 
 #ifndef ADJACENCY_RELATION_H_INCLUDED
 #define ADJACENCY_RELATION_H_INCLUDED
