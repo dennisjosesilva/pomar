@@ -11,6 +11,6 @@ else()
 endif()
 
 
-file(SOURCES src/AdjacencyRelation/Image2D/Image2DAdjacencyRelationByTranslating.cpp)
+set(SOURCES src/AdjacencyRelation/Image2D/Image2DAdjacencyRelationByTranslating.cpp)
 
 add_library(pomar STATIC $(SOURCES))
