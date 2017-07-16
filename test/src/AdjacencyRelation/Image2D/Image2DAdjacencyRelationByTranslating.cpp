@@ -1,11 +1,13 @@
-#include "../../../../catch.hpp"
-#include <pomar/AdjacencyRelation/Image2D/Image2DAdjacencyRelationByTranslating.h>
+#include "../../../catch.hpp"
+#include <AdjacencyRelation/Image2D/Image2DAdjacencyRelationByTranslating.hpp>
+
+using namespace pomar;
 
 SCENARIO("Image2DAdjacencyRelationByTranslating initialize correctly") {
   GIVEN("An adjacency relation defined by the translating of the two points: { (-1, 0), (1,0) } and a image size of (3,1)") {
     int width = 3, height = 1;
-    std::vector<int> dx{-1, 0};
-    std::vector<int> dy{1, 0};
+    std::vector<int> dx{-1, 1};
+    std::vector<int> dy{0, 0};
     Image2DAdjacencyRelationByTranslating adj(width, height, dx, dy);
 
     WHEN("compute adjacent points of (1,0)") {
@@ -20,7 +22,7 @@ SCENARIO("Image2DAdjacencyRelationByTranslating initialize correctly") {
       }
     }
     WHEN("compute adjacent points of (2,0)") {
-      size_t p = 1;
+      size_t p = 2;
       std::vector<int> ap = adj.getAdjacentElements(p);
       THEN("the adjacent points should be { (1,0), NoAdjacentIndex }") {
 	REQUIRE(ap[0] == 1);

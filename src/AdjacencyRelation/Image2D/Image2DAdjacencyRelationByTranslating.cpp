@@ -29,7 +29,8 @@ namespace pomar
       auto qy = py + _dy[i];
 
       if (qx >= 0 && qx < _width && qy >= 0 && qy < _height)
-	_neighbours[i] = qy * _width + qx;
+	_neighbours[j++] = qy * _width + qx;
+      
     }
 
     return _neighbours;
