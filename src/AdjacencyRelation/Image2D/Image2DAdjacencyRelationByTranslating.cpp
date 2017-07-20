@@ -47,8 +47,8 @@ namespace pomar
   std::unique_ptr<Image2DAdjacencyRelationByTranslating>
   Image2DAdjacencyRelationByTranslating::createEightConnectedAdjacency(int width, int height)
   {
-    std::vector<int> dx = {-1,0,1,0,-1,1,1,-1};
-    std::vector<int> dy = {0,-1,0,1,-1,-1,1,1};
+    std::vector<int> dx = {-1,0,1,1,1,0,-1,-1};
+    std::vector<int> dy = {-1,-1,-1,0,1,1,1,0};
     return std::unique_ptr<Image2DAdjacencyRelationByTranslating>(new Image2DAdjacencyRelationByTranslating(width, height, dx, dy));
   }
 }
