@@ -10,7 +10,10 @@ else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif()
 
-set(SOURCES src/AdjacencyRelation/Image2D/Image2DAdjacencyRelationByTranslating.cpp test.cpp)
+set(SOURCES
+  src/AdjacencyRelation/Image2D/Image2DAdjacencyRelationByTranslating.cpp
+  src/MorphologicalTree/MorphologicalTree.cpp
+  test.cpp)
 
 add_executable(test.out ${SOURCES})
 target_link_libraries(test.out pomar)

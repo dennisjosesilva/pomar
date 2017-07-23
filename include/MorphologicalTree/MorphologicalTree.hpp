@@ -1,40 +1,54 @@
+#include <iostream>
 #include <vector>
 #include <limits>
+#include <functional>
+#include <cstddef>
 
 #ifndef MORPHOLOGICAL_TREE_H_INCLUDED
 #define MORPHOLOGICAL_TREE_H_INCLUDED
 
 namespace pomar
 {
-  template<class T>
+  template<class NT>
   class MTNode
   {
   public:
     MTNode();
-    MTNode(int id, T level);
+    MTNode(size_t id, NT level);
 
-    inline int id() const { return _id; }
+    inline size_t id() const { return _id; }
     inline void id(size_t id) { _id = id; }
     
-    inline const T& level() const { return _level; }
-    inline void level(const T& level) { _level = level; }
+    inline const NT& level() const { return _level; }
+    inline void level(const NT& level) { _level = level; }
 
-    inline int parent() const { return _parent; }
-    inline void parent(size_t parent) { _parent = parent);
+    inline size_t parent() const { return _parent; }
+    inline void parent(size_t parent) { _parent = parent; }
 
     inline const std::vector<size_t>& children() const { return _children; }
     inline void addChild(size_t child) { _children.push_back(child); }
     
     inline const std::vector<size_t>& vertexIndexes() const { return _vertexIndexes; }
-    inline void addVertexIndex(int size_t) { _vertexIndexes.push_back(vertexIndex); }
+    inline void addVertexIndex(size_t vertexIndex) { _vertexIndexes.push_back(vertexIndex); }
   private:
     size_t _id;
-    T _level;
+    NT _level;
     size_t _parent;
     
     std::vector<size_t> _children;
     std::vector<size_t> _vertexIndexes;
   };
+
+  /* =============== MTNODE CONTRUCTORS ========================================= */
+  template<class NT>
+  MTNode<NT>::MTNode()
+  {}
+
+  template<class NT>
+  MTNode<NT>::MTNode(size_t id, NT level)
+    :_id(id), _level(level)
+  {}
+
 
   /* =================== MORPHOLOGICAL TREE ==================================== */
   template<class T>
@@ -44,7 +58,7 @@ namespace pomar
     MorphologicalTree(const std::vector<size_t>& parent, const std::vector<size_t>& sortedIndex, const std::vector<T>& vertices);
 
     void transverseFromLeavesToRoot(std::function<void(const MTNode<T>&)> visit);
-    inline size_t getNumberofNodes() { return nodes.size(); }
+    inline size_t getNumberofNodes() const { return _nodes.size(); }
     
   private:
     void createNodes(const std::vector<size_t>& parent, const std::vector<size_t>& sortedIndex, const std::vector<T>& vertices); 
@@ -53,24 +67,32 @@ namespace pomar
     std::vector<size_t> _cmap;
   };
 
+  /* ========================= MORPHOLOGICAL TREE - TRANSVERSAL ================================ */
+  template<class T>
+  MorphologicalTree<T>::MorphologicalTree(const std::vector<size_t>& parent, const std::vector<size_t>& sortedIndex,
+					       const std::vector<T>& vertices)
+  {
+    createNodes(parent, sortedIndex, vertices);
+  }
+  
   /* ========================== MORPHOLOGICAL TREE - TRANSVERSAL ================================ */
   template<class T>
-  void MorphologicalTree<T>::transverseFromLeavesToRoot(std::function<void(const MTNode<T>&> visit))
+  void MorphologicalTree<T>::transverseFromLeavesToRoot(std::function<void(const MTNode<T>&)> visit)
   {
-    for (i = nodes.size(); i > 0; --i)
-      visit(nodes[i-1]);
+    for (auto i = _nodes.size(); i > 0; --i)
+      visit(_nodes[i-1]);
   }
 						       
   /* ========================== MORPHOLOGICAL TREE - CREATE NODES =============================== */
   template<class T>
-  void MorphologicalTr0ee<T>::createNodes(const std::vector<size_t> &parent, const std::vector<size_t> &sortedIndex,
+  void MorphologicalTree<T>::createNodes(const std::vector<size_t> &parent, const std::vector<size_t> &sortedIndex,
 					  const std::vector<T> &vertices)
   {
     const size_t UNDEF = std::numeric_limits<size_t>::max();
     std::vector<size_t> sortedLevelRoots;
-    cmap.resize(vertices.size());
-
-    for (auto &p: cmap)
+    _cmap.resize(vertices.size());
+   
+    for (auto &p: _cmap)
       p = UNDEF;
 
     for (int i = sortedIndex.size(); i > 0; --i) {
@@ -79,32 +101,34 @@ namespace pomar
 	sortedLevelRoots.push_back(p);
     }
 
-    nodes.resize(sortedLevelRoots.size());
+   
+    _nodes.resize(sortedLevelRoots.size());
 
-    auto& root = nodes.front();
-    auto rootCanonicalPixel = sortedLevelRoots;
+    auto& root = _nodes.front();
+    auto rootCanonicalPixel = sortedLevelRoots.front();
     root.id(0);
     root.level(vertices[rootCanonicalPixel]);
     root.addVertexIndex(rootCanonicalPixel);
-    cmap[rootCanonicalPixel] = root.id;
+    _cmap[rootCanonicalPixel] = root.id();
 
-    for (size_t i = 1; i < sortedLevelRoots.size(); ++i) {
-      auto p = sortedLevelRoots[i];
-      cmap[p] = i;
-
-      auto& node = nodes[i];
-      auto& parentNode = nodes[cmap[parent[p]]];
-      node.parent(parentNode.id);
-      node.id(i);
+    auto k = 1;
+    for (size_t i = sortedLevelRoots.size(); i > 0; --i) {
+      auto p = sortedLevelRoots[i-1];
+      _cmap[p] = i-1;
+      
+      auto& node = _nodes[i-1];
+      auto& parentNode = _nodes[_cmap[parent[p]]];
+      node.parent(parentNode.id());
+      node.id(k++);
       node.level(vertices[p]);
       node.addVertexIndex(p);
-      parentNodew.addChild(node.id);
+      parentNode.addChild(node.id());
     }
 
     for (size_t i = 0; i < vertices.size(); i++) {
-      if (cmap[i] == UNDEF) {
-	cmap[i] = cmap[parent[i]];
-	nodes[cmap[i]].addVertexIndex(i);
+      if (_cmap[i] == UNDEF) {
+	_cmap[i] = _cmap[parent[i]];
+	_nodes[_cmap[i]].addVertexIndex(i);
       }
     }
   }
