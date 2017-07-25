@@ -13,6 +13,7 @@ endif()
 set(SOURCES
   src/AdjacencyRelation/Image2D/Image2DAdjacencyRelationByTranslating.cpp
   src/MorphologicalTree/MorphologicalTree.cpp
+  src/MorphologicalTree/MaxTreeBuilder.cpp
   test.cpp)
 
 add_executable(test.out ${SOURCES})
