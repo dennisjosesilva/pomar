@@ -2,8 +2,6 @@
 
 namespace pomar
 {
-  const int Image2DAdjacencyRelationByTranslating::NoAdjacentIndex = -1;
-  
   Image2DAdjacencyRelationByTranslating::
   Image2DAdjacencyRelationByTranslating(int width, int height, const std::vector<int>& dx, const std::vector<int>& dy)
     :_width(width), _height(height), _dx(dx), _dy(dy), _neighbours(dx.size())
@@ -15,13 +13,13 @@ namespace pomar
   {}
     
   const std::vector<int>&
-  Image2DAdjacencyRelationByTranslating::getAdjacentElements(size_t curElem)
+  Image2DAdjacencyRelationByTranslating::getAdjacentElements(int curElem)
   {
     auto px = curElem % _width;
     auto py = curElem / _width;
 
     for (auto& n: _neighbours)
-      n = -1;
+      n = AdjacencyRelation::NoAdjacentIndex;
 
     auto j = 0;
     for (auto i = 0; i < _neighbours.size(); ++i) {

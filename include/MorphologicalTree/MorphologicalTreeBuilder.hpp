@@ -11,9 +11,7 @@ namespace pomar
     template<typename T>
     MorphologicalTree<T> build(const std::vector<T> &vertices, const AdjacencyRelation &adj);
 
-  protected:
-    static const size_t UNDEF;
-    
+  protected:   
     size_t findRoot(std::vector<size_t>& zpar, size_t x) const;
 
     template<typename T>
@@ -47,10 +45,21 @@ namespace pomar
   template<typename T>
   MorphologicalTree<T> build(const std::vector<T> &vertices, const AdjacencyRelation &adj)
   {
+    const int UNDEF = -1;
     std::vector<size_t> parent(vertices.size());
     std::vector<size_t> zpar(vertices.size());
 
-    /*TODO: Implement! */
+    for (auto &p: zpar)
+      p = UNDEF;
+
+    std::vector<size_t> sortedVertices = sort(vertices);
+
+    for (size_t i = 0; i < sortedVertices.size(); i++) {
+      auto p = sortedVertices[i];
+      zpar[p] = parent[p] = p;
+      std::vector<size_t> neighbours = adj.getAdjacentElements(p);
+    }
+    
   }
   
 }

@@ -13,15 +13,15 @@ SCENARIO("Morphological Tree initialize correctly") {
 	7,0,3
     };
 
-    std::vector<size_t> parent {
+    std::vector<int> parent {
         4,1,4,
 	0,1,2,
 	0,1,2
     };
     
-    std::vector<size_t> sortedIndex(vertices.size());
+    std::vector<int> sortedIndex(vertices.size());
     std::iota(sortedIndex.begin(), sortedIndex.end(), 0);
-    std::sort(sortedIndex.begin(), sortedIndex.end(), [&vertices](size_t i1, size_t i2) { return vertices[i1] < vertices[i2]; });
+    std::sort(sortedIndex.begin(), sortedIndex.end(), [&vertices](int i1, int i2) { return vertices[i1] < vertices[i2]; });
 
     WHEN("initialized a Morphological tree (max-tree)") {
       MorphologicalTree<unsigned char> tree(parent, sortedIndex, vertices);
@@ -30,8 +30,8 @@ SCENARIO("Morphological Tree initialize correctly") {
 	REQUIRE(tree.getNumberofNodes() == 5);
       }
       THEN("it should navigate the nodes in the following (level, number of CNPs)  order: (7,1), (3,3), (2,2), (1,1), (0,2)") {
-	std::vector<size_t> levels {7,3,2,1,0};
-	std::vector<size_t> nCNPs  {1,3,2,1,2}; 
+	std::vector<int> levels {7,3,2,1,0};
+	std::vector<int> nCNPs  {1,3,2,1,2}; 
 	int i = 0;
 
 	tree.transverseFromLeavesToRoot([&levels, &nCNPs, &i] (const MTNode<unsigned char>& node) {

@@ -1,4 +1,5 @@
 #include <vector>
+#include <limits>
 #include <cstddef>
 
 #ifndef ADJACENCY_RELATION_H_INCLUDED
@@ -9,8 +10,11 @@ namespace pomar
   class AdjacencyRelation
   {
   public:
-    virtual const std::vector<int>& getAdjacentElements(size_t curElem) = 0;
+    static const int NoAdjacentIndex;
+    virtual const std::vector<int>& getAdjacentElements(int curElem) = 0;
   };
+
+  const int AdjacencyRelation::NoAdjacentIndex = -1;
 }
 
 #endif
