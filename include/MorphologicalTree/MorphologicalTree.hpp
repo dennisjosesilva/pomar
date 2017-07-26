@@ -55,6 +55,7 @@ namespace pomar
   class MorphologicalTree
   {
   public:
+    MorphologicalTree() {}
     MorphologicalTree(const std::vector<int>& parent, const std::vector<int>& sortedIndex, const std::vector<T>& vertices);
 
     void transverseFromLeavesToRoot(std::function<void(const MTNode<T>&)> visit);

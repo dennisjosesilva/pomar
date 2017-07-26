@@ -10,11 +10,11 @@ namespace pomar
   class AdjacencyRelation
   {
   public:
-    static const int NoAdjacentIndex;
+    static const int NoAdjacentIndex = -1;
     virtual const std::vector<int>& getAdjacentElements(int curElem) = 0;
   };
 
-  const int AdjacencyRelation::NoAdjacentIndex = -1;
+  
 }
 
 #endif

@@ -2,63 +2,95 @@
 #include "MorphologicalTree.hpp"
 #include <type_traits>
 #include <vector>
+#include <memory>
 #include <cstddef>
 #include <limits>
 
+#include <iostream>
+
 namespace pomar
 {
+
+/* ============================ MORPHOLOGICAL TREE SORTER ======================================= */
+  template<class T>
+  class MorphologicalTreeBuilderSorter
+  {
+  public:
+    virtual std::vector<int> sort(const std::vector<T>& vertices) const = 0;
+    
+  protected:
+    std::vector<int> STLsort(const std::vector<T>& vertices, std::function<bool(const T&, const T&)>) const;
+  };
+  
+  
+  /* ============================ MAX TREE SORTER ================================================= */
+  template<class T>
+  class MaxTreeSorter: public MorphologicalTreeBuilderSorter<T>
+  {
+  public:
+    std::vector<int> sort(const std::vector<T>& vertices) const;
+    
+  protected:
+    std::vector<int> countingSort(const std::vector<T>& vertices) const;
+  };
+
+
+  /* ================================= MORPHOLOGICAL TREE BUILDER ================================== */
   class MorphologicalTreeBuilder
   {
   public:
-    template<typename T>
-    MorphologicalTree<T> build(const std::vector<T> &vertices, const AdjacencyRelation &adj);
-
-  protected:   
-    size_t findRoot(std::vector<size_t>& zpar, size_t x) const;
+    enum class TreeType { MaxTree = 0, MinTree = 1 };
 
     template<typename T>
-    virtual std::vector<size_t> sort(const std::vector<T>& vertices) const = 0;
-
-    template<typename T>
-    void canonizeTree(const std::vector<T>& vertices, std::vector<size_t> &sortedVertices, std::vector<size_t>& parent) const;
-  };
-  
-  
-  /* ============================ MORPHOLOGICAL TREE BUILDER MAX-TREE ================================================= */
-  class MaxTreeBuilder: public MorphologicalTreeBuilder
-  {
-  protected:
-    template<typename T>
-    std::vector<int> sort(const std::vector<T>& vertices);
+    MorphologicalTree<T> build(const std::vector<T> &vertices, std::unique_ptr<AdjacencyRelation> adj,
+			        TreeType TreeType);
     
-  private:
     template<typename T>
-    std::vector<int> countingSort(const std::vector<T>& vertices);
+    MorphologicalTree<T> buildWithSorter(const std::vector<T> &vertices, std::unique_ptr<AdjacencyRelation> adj,
+			        std::unique_ptr<MorphologicalTreeBuilderSorter<T>> sorter);
+    
+  protected:   
+    int findRoot(std::vector<int>& zpar, int x) const;
 
     template<typename T>
-    std::vector<int> STLsort(const std::vector<T>& vertices);
+    void canonizeTree(const std::vector<T>& vertices, const std::vector<int> &sortedVertices, std::vector<int>& parent) const;
   };
+  
 
   /* ====================================  IMPLEMENTATION ============================================================= */
  
   /* ============================== MORPHOLOGICAL TREE BUILDER ======================================================== */
-  /* ======================================== BUILD =================================================================== */
+  /* ======================================== BUILD FROM TREE TYPE ==================================================== */
   template<typename T>
-  MorphologicalTree<T> MorphologicalTreeBuilder::build(const std::vector<T> &vertices, const AdjacencyRelation &adj)
+  MorphologicalTree<T> MorphologicalTreeBuilder::build(const std::vector<T> &vertices, std::unique_ptr<AdjacencyRelation> adj,
+			        TreeType treeType)
+  {
+    switch(treeType) {
+    case MorphologicalTreeBuilder::TreeType::MaxTree:
+      return buildWithSorter(vertices, std::move(adj), std::unique_ptr<MorphologicalTreeBuilderSorter<T>>(new MaxTreeSorter<T>()));
+    case MorphologicalTreeBuilder::TreeType::MinTree:
+      return buildWithSorter(vertices, std::move(adj), std::unique_ptr<MorphologicalTreeBuilderSorter<T>>(new MaxTreeSorter<T>()));		   
+    }
+  }
+
+  /* ======================================== BUILD FROM SORTER ====================================================== */
+  template<typename T>
+  MorphologicalTree<T> MorphologicalTreeBuilder::buildWithSorter(const std::vector<T> &vertices, std::unique_ptr<AdjacencyRelation> adj,
+						        std::unique_ptr<MorphologicalTreeBuilderSorter<T>> sorter)
   {
     const int UNDEF = -1;
-    std::vector<size_t> parent(vertices.size());
-    std::vector<size_t> zpar(vertices.size());
+    std::vector<int> parent(vertices.size());
+    std::vector<int> zpar(vertices.size());
 
     for (auto &p: zpar)
       p = UNDEF;
 
-    std::vector<size_t> sortedVertices = sort(vertices);
+    std::vector<int> sortedVertices = sorter->sort(vertices);
 
-    for (size_t i = 0; i < sortedVertices.size(); i++) {
+    /*for (size_t i = 0; i < sortedVertices.size(); i++) {
       auto p = sortedVertices[i];
       zpar[p] = parent[p] = p;
-      std::vector<int> neighbours = adj.getAdjacentElements(p);
+      std::vector<int> neighbours = adj->getAdjacentElements(p);
       for (auto n: neighbours) {
 	if (n != AdjacencyRelation::NoAdjacentIndex && zpar[n] != UNDEF) {
 	  auto r = findRoot(zpar, n);
@@ -68,12 +100,15 @@ namespace pomar
       }
     }
 
-    canonizeTree(vertices, sortedVertices, parent);
-    return MorphologicalTree<T>(parent, sortedVertices, vertices);
+    
+    
+    canonizeTree(vertices, sortedVertices, parent);*/
+    /* return MorphologicalTree<T>(parent, sortedVertices, vertices);*/
+    return MorphologicalTree<T>();
   }
 
   /* ======================================== FIND ROOT ======================================================================= */
-  int MorphologicalTree::findRoot(std::vector<int>& zpar, int x) 
+  int MorphologicalTreeBuilder::findRoot(std::vector<int>& zpar, int x) const
   {
     if (zpar[x] == x)
       return x;
@@ -85,7 +120,9 @@ namespace pomar
 
   /* ================================== CANONIZE TREE ========================================================================== */
   template<typename T>
-  void MorphologicalTreeBuilder::canonizeTree(std::vector<T>& vertices, const std::vector<int>& sortedIndex, std::vector<int> parent) {
+  void MorphologicalTreeBuilder::canonizeTree(const std::vector<T>& vertices, const std::vector<int>& sortedIndex,
+					      std::vector<int>& parent) const
+  {
     for (int i = sortedIndex.size()-1; i >= 0; i--) {
       auto v = sortedIndex[i];
       auto q = parent[v];
@@ -96,44 +133,49 @@ namespace pomar
 
   /* ======================================== MAX-TREE BUILDER ======================================================== */
   /* ======================================== SORT ==================================================================== */
-  template<typename T>
-  std::vector<size_t> MaxTreeBuilder::sort(const std::vector<T>& vertices)
+  template<class T>
+  std::vector<int> MaxTreeSorter<T>::sort(const std::vector<T>& vertices) const
   {
     if (std::is_same<T, int>::value || std::is_same<T, unsigned int>::value || std::is_same<T, char>::value ||
 	std::is_same<T, unsigned char>::value || std::is_same<T, unsigned short>::value || std::is_same<T, short>::value)
       return std::move(countingSort(vertices));
-   else
-     return std::move(STLsort(vertices));		       
+    else                        
+     return std::move(MorphologicalTreeBuilderSorter<T>::STLsort(vertices, [](const T& v1, const T& v2) { return v1 < v2; }));		       
   }  
 
   /* ========================================== COUNTING SORT ======================================================== */
-  template<typename T>
-  std::vector<int> countingSort(const std::vector<T>& vertices)
+  template<class T>
+  std::vector<int> MaxTreeSorter<T>::countingSort(const std::vector<T>& vertices) const
   {
     T maxValue = std::numeric_limits<T>::max();
-    std::vector<int> counter(max_value + 1);
+    std::vector<int> counter(maxValue + 1);
     std::vector<int> idx(vertices.size());
 
-    for (auto &c: counter)
+    for (auto &&c: counter)
       c = 0;
 
+    std::cout << (unsigned int)maxValue;
     for (auto i = 0; i < vertices.size(); i++)
       counter[maxValue - vertices[i]]++;
 
+    for (auto i = 1; i <= maxValue; i++)
+      counter[i] += counter[i - 1]; 
+    
     for (auto i = vertices.size() - 1; i >= 0; --i)
-      idx[--counter[maxValue - vertices[i]]] = i;
+      std::cout << std::endl << --counter[maxValue - vertices[i]];
+      /*idx[--counter[maxValue - vertices[i]]] = i;*/
 
     return std::move(idx);
   }
   
   /* ====================================== STL SORT ================================================================= */
-  template<typename T>
-  std::vector<int> MaxTreeBuilder::STLsort(const std::vector<T>& vertices)
+  template<class T>
+  std::vector<int> MorphologicalTreeBuilderSorter<T>::STLsort(const std::vector<T>& vertices,
+							      std::function<bool(const T&, const T&)> cmp) const
   {
     std::vector<int> idx(vertices.size());
     std::iota(idx.begin(), idx.end(), 0);
-    std::sort(idx.begin(), idx.end(), [&vertices](int i1, int i2) { return vertices[i1] < vertices[i2]; });
+    std::sort(idx.begin(), idx.end(), [&vertices,cmp](int i1, int i2) { return cmp(vertices[i1], vertices[i2]); });
     return std::move(idx);
   }
-  
 }
