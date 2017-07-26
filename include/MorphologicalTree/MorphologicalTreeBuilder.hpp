@@ -87,7 +87,7 @@ namespace pomar
 
     std::vector<int> sortedVertices = sorter->sort(vertices);
 
-    /*for (size_t i = 0; i < sortedVertices.size(); i++) {
+    for (size_t i = 0; i < sortedVertices.size(); i++) {
       auto p = sortedVertices[i];
       zpar[p] = parent[p] = p;
       std::vector<int> neighbours = adj->getAdjacentElements(p);
@@ -102,8 +102,9 @@ namespace pomar
 
     
     
-    canonizeTree(vertices, sortedVertices, parent);*/
-    /* return MorphologicalTree<T>(parent, sortedVertices, vertices);*/
+    canonizeTree(vertices, sortedVertices, parent);    
+
+    return MorphologicalTree<T>(parent, sortedVertices, vertices);
     return MorphologicalTree<T>();
   }
 
@@ -151,19 +152,18 @@ namespace pomar
     std::vector<int> counter(maxValue + 1);
     std::vector<int> idx(vertices.size());
 
-    for (auto &&c: counter)
+    for (auto &c: counter)
       c = 0;
 
-    std::cout << (unsigned int)maxValue;
-    for (auto i = 0; i < vertices.size(); i++)
+    for (int i = 0; i < vertices.size(); i++)
       counter[maxValue - vertices[i]]++;
-
-    for (auto i = 1; i <= maxValue; i++)
-      counter[i] += counter[i - 1]; 
     
-    for (auto i = vertices.size() - 1; i >= 0; --i)
-      std::cout << std::endl << --counter[maxValue - vertices[i]];
-      /*idx[--counter[maxValue - vertices[i]]] = i;*/
+
+    for (int i = 1; i <= maxValue; i++) 
+      counter[i] += counter[i - 1];
+    
+    for (int i = vertices.size() - 1; i >= 0; --i)
+      idx[--counter[maxValue - vertices[i]]] = i;
 
     return std::move(idx);
   }

@@ -102,7 +102,6 @@ namespace pomar
 	sortedLevelRoots.push_back(p);
     }
 
-   
     _nodes.resize(sortedLevelRoots.size());
 
     auto& root = _nodes.front();
@@ -113,7 +112,7 @@ namespace pomar
     root.addVertexIndex(rootCanonicalPixel);
     _cmap[rootCanonicalPixel] = root.id();
 
-    for (size_t i = sortedLevelRoots.size()-1; i > 0; --i) {
+    for (size_t i = 1; i < sortedLevelRoots.size(); ++i) {
       auto p = sortedLevelRoots[i];
       _cmap[p] = i;
       

@@ -2,6 +2,8 @@
 #include <MorphologicalTree/MorphologicalTree.hpp>
 #include <algorithm>
 
+#include <iostream>
+
 
 using namespace pomar;
 
@@ -21,8 +23,8 @@ SCENARIO("Morphological Tree initialize correctly") {
     
     std::vector<int> sortedIndex(vertices.size());
     std::iota(sortedIndex.begin(), sortedIndex.end(), 0);
-    std::sort(sortedIndex.begin(), sortedIndex.end(), [&vertices](int i1, int i2) { return vertices[i1] < vertices[i2]; });
-
+    std::sort(sortedIndex.begin(), sortedIndex.end(), [&vertices](int i1, int i2) { return vertices[i1] > vertices[i2]; });
+    
     WHEN("initialized a Morphological tree (max-tree)") {
       MorphologicalTree<unsigned char> tree(parent, sortedIndex, vertices);
 
@@ -35,8 +37,8 @@ SCENARIO("Morphological Tree initialize correctly") {
 	int i = 0;
 
 	tree.transverseFromLeavesToRoot([&levels, &nCNPs, &i] (const MTNode<unsigned char>& node) {
-	    levels[i] == node.level();
-	    nCNPs[i++] == node.vertexIndexes().size();
+	    REQUIRE(levels[i] == node.level());
+	    REQUIRE(nCNPs[i++] == node.vertexIndexes().size());
 	});
       }
     }
