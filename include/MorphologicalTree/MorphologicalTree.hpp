@@ -59,10 +59,18 @@ namespace pomar
     MorphologicalTree(const std::vector<int>& parent, const std::vector<int>& sortedIndex, const std::vector<T>& vertices);
 
     void transverseFromLeavesToRoot(std::function<void(const MTNode<T>&)> visit);
+    
     inline size_t getNumberofNodes() const { return _nodes.size(); }
+    inline const T& getNodeLevel(int id) const { return _nodes[id].level(); }
+    inline int getNodeParent(int id) const { return _nodes[id].parent(); }
+    inline const std::vector<int>& getNodeChildren(int id) const { return _nodes[id].children(); }
+    inline const std::vector<int>& getNodePixels(int id) const { return _nodes[id].vertexIndexes(); }
+
+    std::vector<int> reconstructTreeNode(int id);
     
   private:
-    void createNodes(const std::vector<int>& parent, const std::vector<int>& sortedIndex, const std::vector<T>& vertices); 
+    void createNodes(const std::vector<int>& parent, const std::vector<int>& sortedIndex, const std::vector<T>& vertices);
+    std::vector<int> _reconstructNode(int id, std::vector<int>& tnPixels);
   protected:
     std::vector<MTNode<T>> _nodes;
     std::vector<size_t> _cmap;
@@ -131,7 +139,27 @@ namespace pomar
 	_nodes[_cmap[i]].addVertexIndex(i);
       }
     }
-  }  
+  }
+
+  /* ==================== MORPHOLOGICAL TREE - RECONSTRUCT NODE ========================== */
+  template<class T>
+  std::vector<int> MorphologicalTree<T>::reconstructTreeNode(int id)
+  {
+    std::vector<int> rec;
+    _reconstrucNode(id, rec);
+    return std::move(rec);
+  }
+
+  template<class T>
+  std::vector<int> MorphologicalTree<T>::_reconstructNode(int id, std::vector<int>& rec)
+  {
+    auto nodeVertices = getNodePixels(id);
+    auto children = getNodeChildren(id);
+    pixels.insert(std::end(rec), std::begin(nodeVertices), std::end(nodeVertices));
+
+    for (auto c: children)
+      _reconstructNode(c, rec);
+  }
 }
 
 #endif
