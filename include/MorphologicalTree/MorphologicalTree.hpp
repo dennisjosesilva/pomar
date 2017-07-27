@@ -70,7 +70,7 @@ namespace pomar
     
   private:
     void createNodes(const std::vector<int>& parent, const std::vector<int>& sortedIndex, const std::vector<T>& vertices);
-    std::vector<int> _reconstructNode(int id, std::vector<int>& tnPixels);
+    void _reconstructNode(int id, std::vector<int>& rec);
   protected:
     std::vector<MTNode<T>> _nodes;
     std::vector<size_t> _cmap;
@@ -146,19 +146,19 @@ namespace pomar
   std::vector<int> MorphologicalTree<T>::reconstructTreeNode(int id)
   {
     std::vector<int> rec;
-    _reconstrucNode(id, rec);
+    this->_reconstrucNode(id, rec);
     return std::move(rec);
   }
 
   template<class T>
-  std::vector<int> MorphologicalTree<T>::_reconstructNode(int id, std::vector<int>& rec)
+  void MorphologicalTree<T>::_reconstructNode(int id, std::vector<int>& rec)
   {
     auto nodeVertices = getNodePixels(id);
     auto children = getNodeChildren(id);
-    pixels.insert(std::end(rec), std::begin(nodeVertices), std::end(nodeVertices));
+    rec.insert(std::end(rec), std::begin(nodeVertices), std::end(nodeVertices));
 
     for (auto c: children)
-      _reconstructNode(c, rec);
+      this->_reconstructNode(c, rec);
   }
 }
 
