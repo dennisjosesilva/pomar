@@ -5,8 +5,7 @@
 #include <memory>
 #include <cstddef>
 #include <limits>
-
-#include <iostream>
+#include <algorithm>
 
 namespace pomar
 {

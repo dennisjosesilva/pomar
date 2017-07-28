@@ -24,11 +24,11 @@ conan_basic_setup()''')
     def build(self):
         cmake = CMake(self)
         # shared = "-DBUILD_SHARED_LIBS=ON" if self.options.shared else ""
-        self.run('cmake pomar %s %s' % (cmake.command_line, shared))
+        self.run('cmake pomar %s' % cmake.command_line)
         self.run("cmake --build . %s" % cmake.build_config)
 
     def package(self):
-        self.copy("*.h", dst="include", src="pomar")
+        self.copy("*.hpp", dst="include", src="pomar/include")
         self.copy("*pomar.lib", dst="lib", keep_path=False)
         self.copy("*.dll", dst="bin", keep_path=False)
         self.copy("*.so", dst="lib", keep_path=False)
