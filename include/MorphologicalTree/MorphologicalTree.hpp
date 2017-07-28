@@ -146,7 +146,7 @@ namespace pomar
   std::vector<int> MorphologicalTree<T>::reconstructTreeNode(int id)
   {
     std::vector<int> rec;
-    this->_reconstrucNode(id, rec);
+    this->_reconstructNode(id, rec);
     return std::move(rec);
   }
 

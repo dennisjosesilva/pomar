@@ -2,7 +2,7 @@
 #include <MorphologicalTree/MorphologicalTreeBuilder.hpp>
 #include <AdjacencyRelation/Image2D/Image2DAdjacencyRelationByTranslating.hpp>
 #include <memory>
-#include <iostream>
+#include <algorithm>
 
 using namespace pomar;
 
@@ -47,6 +47,11 @@ SCENARIO("Max tree should be built correctly.") {
 	REQUIRE(tree.getNodeChildren(2) == std::vector<int>({4}));
 	REQUIRE(tree.getNodeChildren(3) == std::vector<int>());
 	REQUIRE(tree.getNodeChildren(4) == std::vector<int>());		
+      }
+      THEN("It should reconstruct a node with id = 1 returning the following: (0,2,3,4,5,6,8)") {
+	auto rnode = tree.reconstructTreeNode(1);
+	std::sort(rnode.begin(), rnode.end());
+	REQUIRE(rnode == std::vector<int>({0,2,3,4,5,6,8}));
       }
     }
   }
