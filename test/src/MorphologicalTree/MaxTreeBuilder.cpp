@@ -34,6 +34,20 @@ SCENARIO("Max tree should be built correctly.") {
 	    REQUIRE(nCNPs[i++] == node.vertexIndexes().size());
 	});
       }
+      THEN("It should return parent equals to (-1,0,1,1,2) for the nodes (0,1,2,3,4)") {
+	REQUIRE(tree.getNodeParent(0) == -1);
+	REQUIRE(tree.getNodeParent(1) == 0);
+	REQUIRE(tree.getNodeParent(2) == 1);
+	REQUIRE(tree.getNodeParent(3) == 1);
+	REQUIRE(tree.getNodeParent(4) == 2);
+      }
+      THEN("It should return children equals to ({1},{2,3},{},{4},{}) for the nodes (0,1,2,3,4)") {
+	REQUIRE(tree.getNodeChildren(0) == std::vector<int>({1}));
+	REQUIRE(tree.getNodeChildren(1) == std::vector<int>({2,3}));
+	REQUIRE(tree.getNodeChildren(2) == std::vector<int>({4}));
+	REQUIRE(tree.getNodeChildren(3) == std::vector<int>());
+	REQUIRE(tree.getNodeChildren(4) == std::vector<int>());		
+      }
     }
   }
 }

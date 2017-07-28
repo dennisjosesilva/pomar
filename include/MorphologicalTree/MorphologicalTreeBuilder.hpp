@@ -99,8 +99,6 @@ namespace pomar
 	}
       }
     }
-
-    
     
     canonizeTree(vertices, sortedVertices, parent);    
 
