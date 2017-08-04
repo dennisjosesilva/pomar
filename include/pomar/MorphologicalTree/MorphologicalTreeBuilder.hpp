@@ -42,13 +42,29 @@ namespace pomar
 
     template<typename T>
     MorphologicalTree<T> build(const std::vector<T> &vertices, std::unique_ptr<AdjacencyRelation> adj,
-			        TreeType TreeType);
+			        TreeType treeType);
+
+    template<typename T>
+    MorphologicalTree<T> build(const std::vector<T> &vertices, std::shared_ptr<AdjacencyRelation> adj,
+			       TreeType treeType);
     
     template<typename T>
     MorphologicalTree<T> buildWithSorter(const std::vector<T> &vertices, std::unique_ptr<AdjacencyRelation> adj,
 			        std::unique_ptr<MorphologicalTreeBuilderSorter<T>> sorter);
+
+    template<typename T>
+    MorphologicalTree<T> buildWithSorter(const std::vector<T> &vertices, std::shared_ptr<AdjacencyRelation> adj,
+			        std::unique_ptr<MorphologicalTreeBuilderSorter<T>> sorter);
     
-  protected:   
+  protected:
+    template<typename T>
+    MorphologicalTree<T> buildWithSorter(const std::vector<T> &vertices, AdjacencyRelation *adj,
+			       MorphologicalTreeBuilderSorter<T> *sorter);
+
+    template<typename T>
+    MorphologicalTree<T> build(const std::vector<T> &vertices, AdjacencyRelation *adj,
+			       TreeType treeType);
+    
     int findRoot(std::vector<int>& zpar, int x) const;
 
     template<typename T>
@@ -59,23 +75,59 @@ namespace pomar
   /* ====================================  IMPLEMENTATION ============================================================= */
  
   /* ============================== MORPHOLOGICAL TREE BUILDER ======================================================== */
-  /* ======================================== BUILD FROM TREE TYPE ==================================================== */
+
+  /* ============================== BUILD FROM TREE TYPE  ============================================================== */
   template<typename T>
-  MorphologicalTree<T> MorphologicalTreeBuilder::build(const std::vector<T> &vertices, std::unique_ptr<AdjacencyRelation> adj,
+  MorphologicalTree<T> MorphologicalTreeBuilder::build(const std::vector<T> &vertices, AdjacencyRelation *adj,
 			        TreeType treeType)
   {
     switch(treeType) {
     case MorphologicalTreeBuilder::TreeType::MaxTree:
-      return buildWithSorter(vertices, std::move(adj), std::unique_ptr<MorphologicalTreeBuilderSorter<T>>(new MaxTreeSorter<T>()));
+      {
+	std::unique_ptr<MorphologicalTreeBuilderSorter<T>> maxTreeSorter(new MaxTreeSorter<T>());
+	return buildWithSorter(vertices, adj, maxTreeSorter.get());
+      }
     case MorphologicalTreeBuilder::TreeType::MinTree:
-      return buildWithSorter(vertices, std::move(adj), std::unique_ptr<MorphologicalTreeBuilderSorter<T>>(new MaxTreeSorter<T>()));		   
+      {
+	std::unique_ptr<MorphologicalTreeBuilderSorter<T>> minTreeSorter(new MaxTreeSorter<T>());
+	return buildWithSorter(vertices, adj, minTreeSorter.get());
+      }
     }
   }
 
-  /* ======================================== BUILD FROM SORTER ====================================================== */
+  template<typename T>
+  MorphologicalTree<T> MorphologicalTreeBuilder::build(const std::vector<T> &vertices, std::unique_ptr<AdjacencyRelation> adj,
+			        TreeType treeType)
+  {
+    return build(vertices, adj.get(), treeType);
+  }
+
+  template<typename T>
+  MorphologicalTree<T> MorphologicalTreeBuilder::build(const std::vector<T> &vertices, std::shared_ptr<AdjacencyRelation> adj,
+			       TreeType treeType)
+  {
+    return build(vertices, adj.get(), treeType);
+  }
+    
+  /* ======================================= BUILD FROM SORTER OVERLOADS =============================================== */
   template<typename T>
   MorphologicalTree<T> MorphologicalTreeBuilder::buildWithSorter(const std::vector<T> &vertices, std::unique_ptr<AdjacencyRelation> adj,
-						        std::unique_ptr<MorphologicalTreeBuilderSorter<T>> sorter)
+			        std::unique_ptr<MorphologicalTreeBuilderSorter<T>> sorter)
+  {
+    return buildWithSorter(vertices, adj.get(), sorter.get());
+  }
+
+  template<typename T>
+  MorphologicalTree<T> MorphologicalTreeBuilder::buildWithSorter(const std::vector<T> &vertices, std::shared_ptr<AdjacencyRelation> adj,
+			        std::unique_ptr<MorphologicalTreeBuilderSorter<T>> sorter)
+  {
+    return buildWithSorter(vertices, adj.get(), sorter.get());
+  }
+  
+  /* ======================================== BUILDING ALGORITHM  ====================================================== */
+  template<typename T>
+  MorphologicalTree<T> MorphologicalTreeBuilder::buildWithSorter(const std::vector<T> &vertices, AdjacencyRelation *adj,
+						        MorphologicalTreeBuilderSorter<T> *sorter)
   {
     const int UNDEF = -1;
     std::vector<int> parent(vertices.size());
