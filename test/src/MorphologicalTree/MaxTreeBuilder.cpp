@@ -1,6 +1,6 @@
 #include "../../catch.hpp"
-#include <MorphologicalTree/MorphologicalTreeBuilder.hpp>
-#include <AdjacencyRelation/Image2D/Image2DAdjacencyRelationByTranslating.hpp>
+#include <pomar/MorphologicalTree/MorphologicalTreeBuilder.hpp>
+#include <pomar/AdjacencyRelation/Image2D/Image2DAdjacencyRelationByTranslating.hpp>
 #include <memory>
 #include <algorithm>
 
@@ -15,7 +15,7 @@ SCENARIO("Max tree should be built correctly.") {
     };
     auto width = 3;
     auto height = 3;
-    auto adj = Image2DAdjacencyRelationByTranslating::createFourConnectedAdjacency(width, height);
+    std::unique_ptr<AdjacencyRelation> adj = Image2DAdjacencyRelationByTranslating::createFourConnectedAdjacency(width, height);
     MorphologicalTreeBuilder builder;
 	
     WHEN ("The builder builds") {

@@ -1,5 +1,5 @@
 #include "../../catch.hpp"
-#include <MorphologicalTree/MorphologicalTree.hpp>
+#include <pomar/MorphologicalTree/MorphologicalTree.hpp>
 #include <algorithm>
 
 #include <iostream>

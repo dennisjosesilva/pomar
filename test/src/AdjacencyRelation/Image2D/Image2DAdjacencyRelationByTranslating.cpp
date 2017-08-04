@@ -1,6 +1,6 @@
 #include "../../../catch.hpp"
-#include <AdjacencyRelation/Image2D/Image2DAdjacencyRelationByTranslating.hpp>
-#include <AdjacencyRelation/AdjacencyRelation.hpp>
+#include <pomar/AdjacencyRelation/Image2D/Image2DAdjacencyRelationByTranslating.hpp>
+#include <pomar/AdjacencyRelation/AdjacencyRelation.hpp>
 
 using namespace pomar;
 
