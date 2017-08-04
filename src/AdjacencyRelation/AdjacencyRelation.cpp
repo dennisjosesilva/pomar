@@ -1,4 +1,4 @@
-#include "../../include/AdjacencyRelation/AdjacencyRelation.hpp"
+#include <pomar/AdjacencyRelation/AdjacencyRelation.hpp>
 
 namespace pomar
 {
