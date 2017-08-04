@@ -1,4 +1,4 @@
-#include <AdjacencyRelation/Image2D/Image2DAdjacencyRelationByTranslating.hpp>
+#include <pomar/AdjacencyRelation/Image2D/Image2DAdjacencyRelationByTranslating.hpp>
 
 namespace pomar
 {
