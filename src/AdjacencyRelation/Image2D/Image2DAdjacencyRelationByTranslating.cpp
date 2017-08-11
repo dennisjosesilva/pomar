@@ -22,7 +22,7 @@ namespace pomar
       n = AdjacencyRelation::NoAdjacentIndex;
 
     auto j = 0;
-    for (auto i = 0; i < _neighbours.size(); ++i) {
+    for (size_t i = 0; i < _neighbours.size(); ++i) {
       auto qx = px + _dx[i];
       auto qy = py + _dy[i];
 

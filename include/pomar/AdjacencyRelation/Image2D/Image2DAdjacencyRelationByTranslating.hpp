@@ -17,11 +17,11 @@ namespace pomar
     static std::unique_ptr<Image2DAdjacencyRelationByTranslating> createEightConnectedAdjacency(int width, int height);
     
   private:
+    size_t _width;	    			  
+    size_t _height;
     std::vector<int> _dx;
     std::vector<int> _dy;
     std::vector<int> _neighbours;
-    size_t _height;
-    size_t _width;	    			  
   };
 }
 

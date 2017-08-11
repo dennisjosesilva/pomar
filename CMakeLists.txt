@@ -15,4 +15,6 @@ set(SOURCES
   src/AdjacencyRelation/Image2D/Image2DAdjacencyRelationByTranslating.cpp
   src/AdjacencyRelation/AdjacencyRelation.cpp)
 
+include(SetCompilerWarningAll.cmake)
+
 add_library(pomar STATIC ${SOURCES})
