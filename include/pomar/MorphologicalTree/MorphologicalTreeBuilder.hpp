@@ -93,6 +93,7 @@ namespace pomar
 	return buildWithSorter(vertices, adj, minTreeSorter.get());
       }
     }
+    throw std::invalid_argument("invalid tree type: treeType must be a valid value of the enumeration TreeType");
   }
 
   template<typename T>
@@ -204,7 +205,7 @@ namespace pomar
     for (auto &c: counter)
       c = 0;
 
-    for (int i = 0; i < vertices.size(); i++)
+    for (size_t i = 0; i < vertices.size(); i++)
       counter[maxValue - vertices[i]]++;
     
 

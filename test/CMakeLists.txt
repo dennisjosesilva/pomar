@@ -16,5 +16,7 @@ set(SOURCES
   src/MorphologicalTree/MaxTreeBuilder.cpp
   test.cpp)
 
+include(../SetCompilerWarningAll.cmake)
+
 add_executable(test.out ${SOURCES})
 target_link_libraries(test.out pomar)
