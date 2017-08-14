@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <limits>
 #include <algorithm>
+#include <numeric>
 
 namespace pomar
 {
@@ -16,19 +17,19 @@ namespace pomar
   {
   public:
     virtual std::vector<int> sort(const std::vector<T>& vertices) const = 0;
-    
+
   protected:
     std::vector<int> STLsort(const std::vector<T>& vertices, std::function<bool(const T&, const T&)>) const;
   };
-  
-  
+
+
   /* ============================ MAX TREE SORTER ================================================= */
   template<class T>
   class MaxTreeSorter: public MorphologicalTreeBuilderSorter<T>
   {
   public:
     std::vector<int> sort(const std::vector<T>& vertices) const;
-    
+
   protected:
     std::vector<int> countingSort(const std::vector<T>& vertices) const;
   };
@@ -47,7 +48,7 @@ namespace pomar
     template<typename T>
     MorphologicalTree<T> build(const std::vector<T> &vertices, std::shared_ptr<AdjacencyRelation> adj,
 			       TreeType treeType);
-    
+
     template<typename T>
     MorphologicalTree<T> buildWithSorter(const std::vector<T> &vertices, std::unique_ptr<AdjacencyRelation> adj,
 			        std::unique_ptr<MorphologicalTreeBuilderSorter<T>> sorter);
@@ -55,7 +56,7 @@ namespace pomar
     template<typename T>
     MorphologicalTree<T> buildWithSorter(const std::vector<T> &vertices, std::shared_ptr<AdjacencyRelation> adj,
 			        std::unique_ptr<MorphologicalTreeBuilderSorter<T>> sorter);
-    
+
   protected:
     template<typename T>
     MorphologicalTree<T> buildWithSorter(const std::vector<T> &vertices, AdjacencyRelation *adj,
@@ -64,16 +65,16 @@ namespace pomar
     template<typename T>
     MorphologicalTree<T> build(const std::vector<T> &vertices, AdjacencyRelation *adj,
 			       TreeType treeType);
-    
+
     int findRoot(std::vector<int>& zpar, int x) const;
 
     template<typename T>
     void canonizeTree(const std::vector<T>& vertices, const std::vector<int> &sortedVertices, std::vector<int>& parent) const;
   };
-  
+
 
   /* ====================================  IMPLEMENTATION ============================================================= */
- 
+
   /* ============================== MORPHOLOGICAL TREE BUILDER ======================================================== */
 
   /* ============================== BUILD FROM TREE TYPE  ============================================================== */
@@ -109,7 +110,7 @@ namespace pomar
   {
     return build(vertices, adj.get(), treeType);
   }
-    
+
   /* ======================================= BUILD FROM SORTER OVERLOADS =============================================== */
   template<typename T>
   MorphologicalTree<T> MorphologicalTreeBuilder::buildWithSorter(const std::vector<T> &vertices, std::unique_ptr<AdjacencyRelation> adj,
@@ -124,7 +125,7 @@ namespace pomar
   {
     return buildWithSorter(vertices, adj.get(), sorter.get());
   }
-  
+
   /* ======================================== BUILDING ALGORITHM  ====================================================== */
   template<typename T>
   MorphologicalTree<T> MorphologicalTreeBuilder::buildWithSorter(const std::vector<T> &vertices, AdjacencyRelation *adj,
@@ -151,8 +152,8 @@ namespace pomar
 	}
       }
     }
-    
-    canonizeTree(vertices, sortedVertices, parent);    
+
+    canonizeTree(vertices, sortedVertices, parent);
 
     return MorphologicalTree<T>(parent, sortedVertices, vertices);
     return MorphologicalTree<T>();
@@ -190,9 +191,9 @@ namespace pomar
     if (std::is_same<T, int>::value || std::is_same<T, unsigned int>::value || std::is_same<T, char>::value ||
 	std::is_same<T, unsigned char>::value || std::is_same<T, unsigned short>::value || std::is_same<T, short>::value)
       return std::move(countingSort(vertices));
-    else                        
-     return std::move(MorphologicalTreeBuilderSorter<T>::STLsort(vertices, [](const T& v1, const T& v2) { return v1 < v2; }));		       
-  }  
+    else
+     return std::move(MorphologicalTreeBuilderSorter<T>::STLsort(vertices, [](const T& v1, const T& v2) { return v1 < v2; }));
+  }
 
   /* ========================================== COUNTING SORT ======================================================== */
   template<class T>
@@ -207,17 +208,17 @@ namespace pomar
 
     for (size_t i = 0; i < vertices.size(); i++)
       counter[maxValue - vertices[i]]++;
-    
 
-    for (int i = 1; i <= maxValue; i++) 
+
+    for (int i = 1; i <= maxValue; i++)
       counter[i] += counter[i - 1];
-    
+
     for (int i = vertices.size() - 1; i >= 0; --i)
       idx[--counter[maxValue - vertices[i]]] = i;
 
     return std::move(idx);
   }
-  
+
   /* ====================================== STL SORT ================================================================= */
   template<class T>
   std::vector<int> MorphologicalTreeBuilderSorter<T>::STLsort(const std::vector<T>& vertices,

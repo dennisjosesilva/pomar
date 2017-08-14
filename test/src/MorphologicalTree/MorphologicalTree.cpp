@@ -1,5 +1,6 @@
 #include "../../catch.hpp"
 #include <pomar/MorphologicalTree/MorphologicalTree.hpp>
+#include <numeric>
 #include <algorithm>
 
 #include <iostream>
@@ -20,11 +21,11 @@ SCENARIO("Morphological Tree initialize correctly") {
 	0,1,2,
 	0,1,2
     };
-    
+
     std::vector<int> sortedIndex(vertices.size());
     std::iota(sortedIndex.begin(), sortedIndex.end(), 0);
     std::sort(sortedIndex.begin(), sortedIndex.end(), [&vertices](int i1, int i2) { return vertices[i1] > vertices[i2]; });
-    
+
     WHEN("initialized a Morphological tree (max-tree)") {
       MorphologicalTree<unsigned char> tree(parent, sortedIndex, vertices);
 
@@ -33,7 +34,7 @@ SCENARIO("Morphological Tree initialize correctly") {
       }
       THEN("it should navigate the nodes in the following (level, number of CNPs)  order: (7,1), (3,3), (2,2), (1,1), (0,2)") {
 	std::vector<int> levels {7,3,2,1,0};
-	std::vector<int> nCNPs  {1,3,2,1,2}; 
+	std::vector<int> nCNPs  {1,3,2,1,2};
 	int i = 0;
 
 	tree.transverseFromLeavesToRoot([&levels, &nCNPs, &i] (const MTNode<unsigned char>& node) {
@@ -53,7 +54,7 @@ SCENARIO("Morphological Tree initialize correctly") {
 	REQUIRE(tree.getNodeChildren(1) == std::vector<int>({2,3}));
 	REQUIRE(tree.getNodeChildren(2) == std::vector<int>({4}));
 	REQUIRE(tree.getNodeChildren(3) == std::vector<int>());
-	REQUIRE(tree.getNodeChildren(4) == std::vector<int>());		
+	REQUIRE(tree.getNodeChildren(4) == std::vector<int>());
       }
     }
   }
