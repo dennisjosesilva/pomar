@@ -16,15 +16,19 @@ namespace pomar
     inline void y(int py) { _y = py; }
 
 
-    Point2D<T> sum(const Point2D& q) const;
-    Point2D<T> sub(const Point2D& q) const;
+    Point2D<T> sum(const Point2D<T>& q) const;
+    Point2D<T> sub(const Point2D<T>& q) const;
+    bool isEqual(const Point2D<T> &q) const;
+    
     template<typename V> Point2D<T> mult(const V& value) const;
 
-    Point2D<T> operator+(const Point2D &q) const;
+    Point2D<T> operator+(const Point2D<T> &q) const;
     void operator+= (const Point2D<T> &q);
     
     Point2D operator-(const Point2D<T> &q) const;
     void operator-=(const Point2D<T> &q);
+
+    bool operator==(const Point2D<T>& q) const;
     
     template<typename V> Point2D<T> operator*(const V& value) const;
     template<typename V> void operator*=(const V& value);
@@ -47,7 +51,7 @@ namespace pomar
   template<typename V>
   Point2D<T> Point2D<T>::mult(const V& value) const
   {
-    return Point(_x * value, _y * value);
+    return Point2D<T>(_x * value, _y * value);
   }
 
   template<class T>
@@ -73,15 +77,21 @@ namespace pomar
   template<class T>
   Point2D<T> Point2D<T>::sum(const Point2D<T>& q) const
   {
-    return Point2D(_x + q._x, _y + q._y);
+    return Point2D<T>(_x + q._x, _y + q._y);
   }
 
   template<class T>
   Point2D<T> Point2D<T>::sub(const Point2D<T>& q) const
   {
-    return Point2D(_x - q._x, _y - q._y);
+    return Point2D<T>(_x - q._x, _y - q._y);
   }
 
+  template<class T>
+  bool Point2D<T>::isEqual(const Point2D<T> &q) const
+  {
+    return _x == q._x && _y == q._y;
+  }
+  
   template<class T>
   Point2D<T> Point2D<T>::operator+(const Point2D<T> &q) const
   {
@@ -106,6 +116,12 @@ namespace pomar
   {
     _x -= q._x;
     _y -= q._y;
+  }
+
+  template<class T>
+  bool Point2D<T>::operator==(const Point2D<T>& q) const
+  {
+    return isEqual(q);
   }
 }
 
