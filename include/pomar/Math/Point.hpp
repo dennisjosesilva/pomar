@@ -21,6 +21,7 @@ namespace pomar
     bool isEqual(const Point2D<T> &q) const;
     
     template<typename V> Point2D<T> mult(const V& value) const;
+    template<typename V> Point2D<T> div(const V& value) const;
 
     Point2D<T> operator+(const Point2D<T> &q) const;
     void operator+= (const Point2D<T> &q);
@@ -32,6 +33,8 @@ namespace pomar
     
     template<typename V> Point2D<T> operator*(const V& value) const;
     template<typename V> void operator*=(const V& value);
+    template<typename V> Point2D<T> operator/(const V& value) const;
+    template<typename V> void operator/=(const V& value);
     
   private:
     T _x;
@@ -69,6 +72,28 @@ namespace pomar
     _y *= value;
   }
 
+  template<class T>
+  template<typename V>
+  Point2D<T> Point2D<T>::div(const V& value) const
+  {
+    return Point2D<T>(_x / value, _y / value);
+  }
+
+  template<class T>
+  template<typename V>
+  Point2D<T> Point2D<T>::operator/(const V& value) const
+  {
+    return div(value);
+  }
+
+  template<class T>
+  template<typename V>
+  void Point2D<T>::operator/=(const V& value)
+  {
+    _x /= value;
+    _y /= value;
+  }
+  
   template<class T>
   Point2D<T>::Point2D(T px, T py)
     :_x(px), _y(py)

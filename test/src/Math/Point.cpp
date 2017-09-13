@@ -37,5 +37,35 @@ SCENARIO("2D points arithmetics should be correctly") {
 	REQUIRE(r == IPoint2D(6,8));
       }
     }
+    WHEN("p *= 2 is perfomed") {
+      p *= 2;
+      THEN("p should be equal to (6,8)") {
+	REQUIRE(p == IPoint2D(6,8));
+      }	
+    }
+    WHEN("r = p - q is perfomed") {
+      auto r = p - q;
+      THEN("r should be equal to (5,-1)") {
+	REQUIRE(r == IPoint2D(5, -1));
+      }
+    }
+    WHEN("p -= q is perfomed") {
+      p -= q;
+      THEN("p should be equal to (5,-1)") {
+	REQUIRE(p == IPoint2D(5,-1));
+      }
+    }
+    WHEN("r = p / 2 is performed") {
+      auto r = p / 2;
+      THEN("r should be equal to (1, 2)") {
+	REQUIRE(r == IPoint2D(1,2));
+      }
+    }
+    WHEN("p /= 2 is performed") {
+       p /= 2;
+      THEN("p should be equal to (1, 2)") {
+	REQUIRE(p == IPoint2D(1,2));
+      }
+    }
   }
 }
