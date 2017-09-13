@@ -13,8 +13,7 @@ endif()
 
 set(SOURCES
   src/AdjacencyRelation/Image2D/Image2DAdjacencyRelationByTranslating.cpp
-  src/AdjacencyRelation/AdjacencyRelation.cpp
-  src/Math/Point.cpp)
+  src/AdjacencyRelation/AdjacencyRelation.cpp)
 
 include(SetCompilerWarningAll.cmake)
 

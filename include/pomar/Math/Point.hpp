@@ -3,56 +3,110 @@
 
 namespace pomar
 {
+  template<class T>
   class Point2D
   {
   public:
-    Point2D(int px, int py);
+    Point2D(T px, T py);
 
-    inline int x() const { return _x; }
+    inline T x() const { return _x; }
     inline void x(int px) { _x = px; }
 
-    inline int y() const { return _y; }
+    inline T y() const { return _y; }
     inline void y(int py) { _y = py; }
 
 
-    Point2D sum(const Point2D& q) const;
-    Point2D sub(const Point2D& q) const;
-    template<typename T> Point2D mult(const T& value) const;
+    Point2D<T> sum(const Point2D& q) const;
+    Point2D<T> sub(const Point2D& q) const;
+    template<typename V> Point2D<T> mult(const V& value) const;
 
-    Point2D operator+(const Point2D &q) const;
-    void operator+= (const Point2D &q);
+    Point2D<T> operator+(const Point2D &q) const;
+    void operator+= (const Point2D<T> &q);
     
-    Point2D operator-(const Point2D &q) const;
-    void operator-=(const Point2D &q);
+    Point2D operator-(const Point2D<T> &q) const;
+    void operator-=(const Point2D<T> &q);
     
-    template<typename T> Point2D operator*(const T& value) const;
-    template<typename T> void operator*=(const T& value);
+    template<typename V> Point2D<T> operator*(const V& value) const;
+    template<typename V> void operator*=(const V& value);
     
   private:
-    int _x;
-    int _y;
+    T _x;
+    T _y;
   };
 
+  using ULPoint2D = Point2D<unsigned long>;
+  using LPoint2D = Point2D<long>;
+  using IPoint2D = Point2D<int>;
+  using UIPoint2D = Point2D<unsigned int>;
+  using CPoint2D = Point2D<char>;
+  using UCPoint2D = Point2D<unsigned char>;
+  using FPoint2D = Point2D<float>;
+  using DPoint2D = Point2D<double>;
 
-  template<typename T>
-  Point2D Point2D::mult(const T& value) const
+  template<class T>
+  template<typename V>
+  Point2D<T> Point2D<T>::mult(const V& value) const
   {
     return Point(_x * value, _y * value);
   }
 
-  template<typename T>
-  Point2D Point2D::operator*(const T& value) const
+  template<class T>
+  template<typename V>
+  Point2D<T> Point2D<T>::operator*(const V& value) const
   {
     return mult(value);
   }
 
-  template<typename T>
-  void Point2D::operator*=(const T& value)
+  template<class T>
+  template<typename V>
+  void Point2D<T>::operator*=(const V& value)
   {
     _x *= value;
     _y *= value;
   }
-  
+
+  template<class T>
+  Point2D<T>::Point2D(T px, T py)
+    :_x(px), _y(py)
+  {}
+
+  template<class T>
+  Point2D<T> Point2D<T>::sum(const Point2D<T>& q) const
+  {
+    return Point2D(_x + q._x, _y + q._y);
+  }
+
+  template<class T>
+  Point2D<T> Point2D<T>::sub(const Point2D<T>& q) const
+  {
+    return Point2D(_x - q._x, _y - q._y);
+  }
+
+  template<class T>
+  Point2D<T> Point2D<T>::operator+(const Point2D<T> &q) const
+  {
+    return sum(q);
+  }
+
+  template<class T>
+  void Point2D<T>::operator+= (const Point2D<T> &q)
+  {
+    _x += q._x;
+    _y += q._y;
+  }
+
+  template<class T>
+  Point2D<T> Point2D<T>::operator-(const Point2D<T> &q) const
+  {
+    return sub(q);
+  }
+
+  template<class T>
+  void Point2D<T>::operator-=(const Point2D &q)
+  {
+    _x -= q._x;
+    _y -= q._y;
+  }
 }
 
 #endif

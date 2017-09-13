@@ -14,6 +14,7 @@ set(SOURCES
   src/AdjacencyRelation/Image2D/Image2DAdjacencyRelationByTranslating.cpp
   src/MorphologicalTree/MorphologicalTree.cpp
   src/MorphologicalTree/MaxTreeBuilder.cpp
+  src/Math/Point.cpp
   test.cpp)
 
 include(../SetCompilerWarningAll.cmake)
