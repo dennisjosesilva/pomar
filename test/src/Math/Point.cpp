@@ -7,7 +7,7 @@ SCENARIO("2D points arithmetics should be correctly") {
   GIVEN("The points p = (3,4) and q =(-2,5)") {
     IPoint2D p(3, 4), q(-2, 5);
 
-    WHEN("r = p == q is performed") {
+    WHEN("r = p == p is performed") {
       auto r = p == p;
       THEN("r should be true") {
 	REQUIRE(r == true);

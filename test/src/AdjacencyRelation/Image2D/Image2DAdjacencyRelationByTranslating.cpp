@@ -1,15 +1,15 @@
 #include "../../../catch.hpp"
 #include <pomar/AdjacencyRelation/Image2D/Image2DAdjacencyRelationByTranslating.hpp>
 #include <pomar/AdjacencyRelation/AdjacencyRelation.hpp>
+#include <pomar/Math/Point.hpp>
 
 using namespace pomar;
 
 SCENARIO("Image2DAdjacencyRelationByTranslating initialize correctly") {
   GIVEN("An adjacency relation defined by the translating of the two points: { (-1, 0), (1,0) } and a image size of (3,1)") {
-    int width = 3, height = 1;
-    std::vector<int> dx{-1, 1};
-    std::vector<int> dy{0, 0};
-    Image2DAdjacencyRelationByTranslating adj(width, height, dx, dy);
+    int width = 3, height = 1;    
+    std::vector<IPoint2D> dt{{-1,0}, {1,0}};
+    Image2DAdjacencyRelationByTranslating adj(width, height, dt);
 
     WHEN("compute adjacent points of (1,0)") {
       size_t p = 1;

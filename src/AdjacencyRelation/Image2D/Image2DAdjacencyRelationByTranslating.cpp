@@ -3,13 +3,13 @@
 namespace pomar
 {
   Image2DAdjacencyRelationByTranslating::
-  Image2DAdjacencyRelationByTranslating(int width, int height, const std::vector<int>& dx, const std::vector<int>& dy)
-    :_width(width), _height(height), _dx(dx), _dy(dy), _neighbours(dx.size())
+  Image2DAdjacencyRelationByTranslating(int width, int height, const std::vector<IPoint2D>& dt)
+    :_width(width), _height(height), _dt(dt), _neighbours(dt.size())
   {}
 
   Image2DAdjacencyRelationByTranslating::
-  Image2DAdjacencyRelationByTranslating(int width, int height, std::initializer_list<int> dx, std::initializer_list<int> dy)
-    :_width(width), _height(height), _dx(dx), _dy(dy), _neighbours(dx.size())
+  Image2DAdjacencyRelationByTranslating(int width, int height, std::initializer_list<IPoint2D>& dt)
+    :_width(width), _height(height), _dt(dt), _neighbours(dt.size())
   {}
     
   const std::vector<int>&
@@ -17,17 +17,17 @@ namespace pomar
   {
     auto px = curElem % _width;
     auto py = curElem / _width;
-
+    IPoint2D currElem(px, py);
+    
     for (auto& n: _neighbours)
       n = AdjacencyRelation::NoAdjacentIndex;
 
     auto j = 0;
     for (size_t i = 0; i < _neighbours.size(); ++i) {
-      auto qx = px + _dx[i];
-      auto qy = py + _dy[i];
+      auto q = currElem + _dt[i];
 
-      if (qx >= 0 && qx < _width && qy >= 0 && qy < _height)
-	_neighbours[j++] = qy * _width + qx;
+      if (q.x() >= 0 && q.x() < _width && q.y() >= 0 && q.y() < _height)
+	_neighbours[j++] = q.y() * _width + q.x();
       
     }
 
@@ -37,16 +37,14 @@ namespace pomar
   std::unique_ptr<Image2DAdjacencyRelationByTranslating>
   Image2DAdjacencyRelationByTranslating::createFourConnectedAdjacency(int width, int height)
   {
-    std::vector<int> dx = {-1,0,1,0};
-    std::vector<int> dy = {0,-1,0,1};
-    return std::unique_ptr<Image2DAdjacencyRelationByTranslating>(new Image2DAdjacencyRelationByTranslating(width, height, dx, dy));
+    std::vector<IPoint2D> dt{{-1,0}, {0,-1}, {1, 0}, {0, 1}};
+    return std::unique_ptr<Image2DAdjacencyRelationByTranslating>(new Image2DAdjacencyRelationByTranslating(width, height, dt));
   }
   
   std::unique_ptr<Image2DAdjacencyRelationByTranslating>
   Image2DAdjacencyRelationByTranslating::createEightConnectedAdjacency(int width, int height)
   {
-    std::vector<int> dx = {-1,0,1,1,1,0,-1,-1};
-    std::vector<int> dy = {-1,-1,-1,0,1,1,1,0};
-    return std::unique_ptr<Image2DAdjacencyRelationByTranslating>(new Image2DAdjacencyRelationByTranslating(width, height, dx, dy));
+    std::vector<IPoint2D> dt{{-1,-1}, {0,-1}, {1,-1}, {1,0}, {1,1}, {0,1}, {-1,1}, {-1,0}};
+    return std::unique_ptr<Image2DAdjacencyRelationByTranslating>(new Image2DAdjacencyRelationByTranslating(width, height, dt));
   }
 }
