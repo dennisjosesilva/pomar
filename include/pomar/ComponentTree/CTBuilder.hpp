@@ -1,5 +1,5 @@
 #include <pomar/AdjacencyRelation/Adjacency.hpp>
-#include <pomar/ComponenentTree/ComponenentTree.hpp>
+#include <pomar/ComponentTree/CTree.hpp>
 #include <type_traits>
 #include <vector>
 #include <memory>
@@ -11,7 +11,7 @@
 namespace pomar
 {
 
-/* ============================ MORPHOLOGICAL TREE SORTER ======================================= */
+/* ============================ COMPONENT TREE SORTER ======================================= */
   template<class T>
   class CTSorter
   {
@@ -35,7 +35,7 @@ namespace pomar
   };
 
 
-  /* ================================= MORPHOLOGICAL TREE BUILDER ================================== */
+  /* ================================= COMPONENT TREE BUILDER ================================== */
   class CTBuilder
   {
   public:
@@ -54,16 +54,16 @@ namespace pomar
 			        std::unique_ptr<CTSorter<T>> sorter);
 
     template<typename T>
-    MorphologicalTree<T> build(const std::vector<T> &elements, std::shared_ptr<Adjacency> adj,
+    CTree<T> build(const std::vector<T> &elements, std::shared_ptr<Adjacency> adj,
 			        std::unique_ptr<CTSorter<T>> sorter);
 
   protected:
     template<typename T>
-    MorphologicalTree<T> build(const std::vector<T> &elements, Adjacency *adj,
+    CTree<T> build(const std::vector<T> &elements, Adjacency *adj,
 			       CTSorter<T> *sorter);
 
     template<typename T>
-    MorphologicalTree<T> build(const std::vector<T> &vertices, AdjacencyRelation *adj,
+    CTree<T> build(const std::vector<T> &elements, Adjacency *adj,
 			       TreeType treeType);
 
     int findRoot(std::vector<int>& zpar, int x) const;
@@ -75,11 +75,11 @@ namespace pomar
 
   /* ====================================  IMPLEMENTATION ============================================================= */
 
-  /* ============================== MORPHOLOGICAL TREE BUILDER ======================================================== */
+  /* ============================== COMPONENT TREE BUILDER ======================================================== */
 
   /* ============================== BUILD FROM TREE TYPE  ============================================================== */
   template<typename T>
-  MorphologicalTree<T> MorphologicalTreeBuilder::build(const std::vector<T> &elements, Adjacency *adj,
+  CTree<T> CTBuilder::build(const std::vector<T> &elements, Adjacency *adj,
 			        TreeType treeType)
   {
     switch(treeType) {
@@ -90,22 +90,22 @@ namespace pomar
       }
       case CTBuilder::TreeType::MinTree:
       {
-      	std::unique_ptr<CTBuilder<T>> minTreeSorter(new MaxTreeSorter<T>());
-      	return buildWithSorter(elements, adj, minTreeSorter.get());
+      	std::unique_ptr<CTSorter<T>> minTreeSorter(new MaxTreeSorter<T>());
+      	return build(elements, adj, minTreeSorter.get());
       }
     }
     throw std::invalid_argument("invalid tree type: treeType must be a valid value of the enumeration TreeType");
   }
 
   template<typename T>
-  MorphologicalTree<T> CTBuilder::build(const std::vector<T> &elements, std::unique_ptr<Adjacency> adj,
+  CTree<T> CTBuilder::build(const std::vector<T> &elements, std::unique_ptr<Adjacency> adj,
 			        TreeType treeType)
   {
     return build(elements, adj.get(), treeType);
   }
 
   template<typename T>
-  MorphologicalTree<T> CTBuilder::build(const std::vector<T> &elements, std::shared_ptr<Adjacency> adj,
+  CTree<T> CTBuilder::build(const std::vector<T> &elements, std::shared_ptr<Adjacency> adj,
 			       TreeType treeType)
   {
     return build(elements, adj.get(), treeType);
@@ -113,14 +113,14 @@ namespace pomar
 
   /* ======================================= BUILD FROM SORTER OVERLOADS =============================================== */
   template<typename T>
-  MorphologicalTree<T> CTBuilder::build(const std::vector<T> &elements, std::unique_ptr<Adjacency> adj,
-			        std::unique_ptr<CTBuilder<T>> sorter)
+  CTree<T> CTBuilder::build(const std::vector<T> &elements, std::unique_ptr<Adjacency> adj,
+			        std::unique_ptr<CTSorter<T>> sorter)
   {
     return build(elements, adj.get(), sorter.get());
   }
 
   template<typename T>
-  MorphologicalTree<T> CTBuilder::build(const std::vector<T> &elements, std::shared_ptr<Adjacency> adj,
+  CTree<T> CTBuilder::build(const std::vector<T> &elements, std::shared_ptr<Adjacency> adj,
 			        std::unique_ptr<CTSorter<T>> sorter)
   {
     return build(elements, adj.get(), sorter.get());
@@ -128,7 +128,7 @@ namespace pomar
 
   /* ======================================== BUILDING ALGORITHM  ====================================================== */
   template<typename T>
-  MorphologicalTree<T> CTBuilder::build(const std::vector<T> &elements, Adjacency *adj,
+  CTree<T> CTBuilder::build(const std::vector<T> &elements, Adjacency *adj,
 						        CTSorter<T> *sorter)
   {
     const int UNDEF = -1;
@@ -225,7 +225,7 @@ namespace pomar
   {
     std::vector<int> idx(elements.size());
     std::iota(idx.begin(), idx.end(), 0);
-    std::sort(idx.begin(), idx.end(), [&elements,cmp](int i1, int i2) { return cmp(vertices[i1], vertices[i2]); });
+    std::sort(idx.begin(), idx.end(), [&elements,cmp](int i1, int i2) { return cmp(elements[i1], elements[i2]); });
     return std::move(idx);
   }
 }

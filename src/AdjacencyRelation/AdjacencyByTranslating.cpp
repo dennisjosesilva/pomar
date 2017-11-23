@@ -1,10 +1,10 @@
-#include <pomar/Adjacency/AdjacencyByTranslating.hpp>
+#include <pomar/AdjacencyRelation/AdjacencyByTranslating.hpp>
 
 namespace pomar
 {
   AdjacencyByTranslating2D::
   AdjacencyByTranslating2D(int width, int height, const std::vector<IPoint2D>& t)
-    :_width(width), _height(height), _t(t), _neighbours(dt.size())
+    :_width(width), _height(height), _t(t), _neighbours(t.size())
   {}
 
   AdjacencyByTranslating2D::

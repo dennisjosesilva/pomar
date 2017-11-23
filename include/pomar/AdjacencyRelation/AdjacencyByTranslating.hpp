@@ -7,11 +7,11 @@
 
 namespace pomar
 {
-  class AdjacencyByTranslating2D: public AdjacencyRelation
+  class AdjacencyByTranslating2D: public Adjacency
   {
   public:
-    AdjacencyByTranslating(int width, int height, const std::vector<IPoint2D>& t);
-    AdjacencyByTranslating(int width, int height, std::initializer_list<IPoint2D>& t);
+    AdjacencyByTranslating2D(int width, int height, const std::vector<IPoint2D>& t);
+    AdjacencyByTranslating2D(int width, int height, std::initializer_list<IPoint2D>& t);
     const std::vector<int>& neighbours(int id);
 
     static std::unique_ptr<AdjacencyByTranslating2D> createAdjacency4(int width, int height);

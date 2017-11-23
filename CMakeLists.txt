@@ -12,8 +12,8 @@ endif()
 
 
 set(SOURCES
-  src/AdjacencyRelation/Image2D/Image2DAdjacencyRelationByTranslating.cpp
-  src/AdjacencyRelation/AdjacencyRelation.cpp)
+  src/AdjacencyRelation/AdjacencyByTranslating.cpp
+  src/AdjacencyRelation/Adjacency.cpp)
 
 include(SetCompilerWarningAll.cmake)
 

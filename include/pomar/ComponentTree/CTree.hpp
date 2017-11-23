@@ -29,28 +29,28 @@ namespace pomar
     inline void addChild(int child) { _children.push_back(child); }
 
     inline const std::vector<int>& elementIndices() const { return _elementIndices; }
-    inline void addElement(int elementIndex) { _elementIndices.push_back(elementIndex); }
+    inline void addElementIndex(int elementIndex) { _elementIndices.push_back(elementIndex); }
   private:
     int _id;
     NT _level;
     int _parent;
 
     std::vector<int> _children;
-    std::vector<int> _elementIndexes;
+    std::vector<int> _elementIndices;
   };
 
-  /* =============== MTNODE CONTRUCTORS ========================================= */
+  /* =============== CTNODE CONTRUCTORS ========================================= */
   template<class NT>
-  MTNode<NT>::MTNode()
+  CTNode<NT>::CTNode()
   {}
 
   template<class NT>
-  MTNode<NT>::MTNode(int id, NT level)
+  CTNode<NT>::CTNode(int id, NT level)
     :_id(id), _level(level)
   {}
 
 
-  /* =================== MORPHOLOGICAL TREE ==================================== */
+  /* =================== ComponentTree TREE ==================================== */
   template<class T>
   class CTree
   {
@@ -58,7 +58,7 @@ namespace pomar
     CTree() {}
     CTree(const std::vector<int>& parent, const std::vector<int>& sortedIndices, const std::vector<T>& elements);
 
-    void transverse(std::function<void(const MTNode<T>&)> visit);
+    void transverse(std::function<void(const CTNode<T>&)> visit);
 
     inline size_t numberofNodes() const { return _nodes.size(); }
     inline const T& nodeLevel(int id) const { return _nodes[id].level(); }
@@ -72,7 +72,7 @@ namespace pomar
     void createNodes(const std::vector<int>& parent, const std::vector<int>& sortedIndices, const std::vector<T>& elements);
     void _reconstructNode(int id, std::vector<int>& rec);
   protected:
-    std::vector<MTNode<T>> _nodes;
+    std::vector<CTNode<T>> _nodes;
     std::vector<int> _cmap;
   };
 
@@ -86,7 +86,7 @@ namespace pomar
 
   /* ========================== MORPHOLOGICAL TREE - TRANSVERSAL ================================ */
   template<class T>
-  void CTree<T>::transverse(std::function<void(const MTNode<T>&)> visit)
+  void CTree<T>::transverse(std::function<void(const CTNode<T>&)> visit)
   {
     for (int i = _nodes.size()-1; i >= 0; --i)
       visit(_nodes[i]);
@@ -153,7 +153,7 @@ namespace pomar
   template<class T>
   void CTree<T>::_reconstructNode(int id, std::vector<int>& rec)
   {
-    auto nodeElements = nodePixels(id);
+    auto nodeElements = nodeElements(id);
     auto children = nodeChildren(id);
     rec.insert(std::end(rec), std::begin(nodeElements), std::end(nodeElements));
 
