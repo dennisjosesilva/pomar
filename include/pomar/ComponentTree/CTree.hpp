@@ -28,15 +28,15 @@ namespace pomar
     inline const std::vector<int>& children() const { return _children; }
     inline void addChild(int child) { _children.push_back(child); }
 
-    inline const std::vector<int>& vertexIndexes() const { return _vertexIndexes; }
-    inline void addVertexIndex(int vertexIndex) { _vertexIndexes.push_back(vertexIndex); }
+    inline const std::vector<int>& elementIndices() const { return _elementIndices; }
+    inline void addElement(int elementIndex) { _elementIndices.push_back(elementIndex); }
   private:
     int _id;
     NT _level;
     int _parent;
 
     std::vector<int> _children;
-    std::vector<int> _vertexIndexes;
+    std::vector<int> _elementIndexes;
   };
 
   /* =============== MTNODE CONTRUCTORS ========================================= */
@@ -64,7 +64,7 @@ namespace pomar
     inline const T& nodeLevel(int id) const { return _nodes[id].level(); }
     inline int nodeParent(int id) const { return _nodes[id].parent(); }
     inline const std::vector<int>& nodeChildren(int id) const { return _nodes[id].children(); }
-    inline const std::vector<int>& nodePixels(int id) const { return _nodes[id].vertexIndexes(); }
+    inline const std::vector<int>& nodeElements(int id) const { return _nodes[id].elementIndexes(); }
 
     std::vector<int> reconstructNode(int id);
 
@@ -116,8 +116,8 @@ namespace pomar
     auto rootCanonicalPixel = sortedLevelRoots.front();
     root.id(0);
     root.parent(-1);
-    root.level(vertices[rootCanonicalPixel]);
-    root.addVertexIndex(rootCanonicalPixel);
+    root.level(elements[rootCanonicalPixel]);
+    root.addElementIndex(rootCanonicalPixel);
     _cmap[rootCanonicalPixel] = root.id();
 
     for (size_t i = 1; i < sortedLevelRoots.size(); ++i) {
@@ -128,15 +128,15 @@ namespace pomar
       auto& parentNode = _nodes[_cmap[parent[p]]];
       node.parent(parentNode.id());
       node.id(i);
-      node.level(vertices[p]);
-      node.addVertexIndex(p);
+      node.level(elements[p]);
+      node.addElementIndex(p);
       parentNode.addChild(node.id());
     }
 
     for (size_t i = 0; i < elements.size(); i++) {
       if (_cmap[i] == UNDEF) {
       	_cmap[i] = _cmap[parent[i]];
-      	_nodes[_cmap[i]].addVertexIndex(i);
+      	_nodes[_cmap[i]].addElementIndex(i);
       }
     }
   }
@@ -153,9 +153,9 @@ namespace pomar
   template<class T>
   void CTree<T>::_reconstructNode(int id, std::vector<int>& rec)
   {
-    auto nodeVertices = nodePixels(id);
+    auto nodeElements = nodePixels(id);
     auto children = nodeChildren(id);
-    rec.insert(std::end(rec), std::begin(nodeVertices), std::end(nodeVertices));
+    rec.insert(std::end(rec), std::begin(nodeElements), std::end(nodeElements));
 
     for (auto c: children)
       this->_reconstructNode(c, rec);
