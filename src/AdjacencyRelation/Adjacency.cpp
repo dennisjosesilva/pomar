@@ -1,4 +1,4 @@
-#include <pomar/AdjacencyRelation/AdjacencyRelation.hpp>
+#include <pomar/AdjacencyRelation/Adjacency.hpp>
 
 namespace pomar
 {

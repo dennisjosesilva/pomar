@@ -7,11 +7,11 @@
 
 namespace pomar
 {
-  class AdjacencyRelation
+  class Adjacency
   {
-  public:    
+  public:
     static const int NoAdjacentIndex;
-    virtual const std::vector<int>& getAdjacentElements(int curElem) = 0;
+    virtual const std::vector<int>& neighbours(int id) = 0;
   };
 }
 
