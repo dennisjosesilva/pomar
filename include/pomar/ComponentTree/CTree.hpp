@@ -18,7 +18,7 @@ namespace pomar
 
     inline int id() const { return _id; }
     inline void id(int id) { _id = id; }
-    
+
     inline const NT& level() const { return _level; }
     inline void level(const NT& level) { _level = level; }
 
@@ -27,14 +27,14 @@ namespace pomar
 
     inline const std::vector<int>& children() const { return _children; }
     inline void addChild(int child) { _children.push_back(child); }
-    
+
     inline const std::vector<int>& vertexIndexes() const { return _vertexIndexes; }
     inline void addVertexIndex(int vertexIndex) { _vertexIndexes.push_back(vertexIndex); }
   private:
     int _id;
     NT _level;
     int _parent;
-    
+
     std::vector<int> _children;
     std::vector<int> _vertexIndexes;
   };
@@ -52,24 +52,24 @@ namespace pomar
 
   /* =================== MORPHOLOGICAL TREE ==================================== */
   template<class T>
-  class MorphologicalTree
+  class CTree
   {
   public:
-    MorphologicalTree() {}
-    MorphologicalTree(const std::vector<int>& parent, const std::vector<int>& sortedIndex, const std::vector<T>& vertices);
+    CTree() {}
+    CTree(const std::vector<int>& parent, const std::vector<int>& sortedIndices, const std::vector<T>& elements);
 
-    void transverseFromLeavesToRoot(std::function<void(const MTNode<T>&)> visit);
-    
-    inline size_t getNumberofNodes() const { return _nodes.size(); }
-    inline const T& getNodeLevel(int id) const { return _nodes[id].level(); }
-    inline int getNodeParent(int id) const { return _nodes[id].parent(); }
-    inline const std::vector<int>& getNodeChildren(int id) const { return _nodes[id].children(); }
-    inline const std::vector<int>& getNodePixels(int id) const { return _nodes[id].vertexIndexes(); }
+    void transverse(std::function<void(const MTNode<T>&)> visit);
 
-    std::vector<int> reconstructTreeNode(int id);
-    
+    inline size_t numberofNodes() const { return _nodes.size(); }
+    inline const T& nodeLevel(int id) const { return _nodes[id].level(); }
+    inline int nodeParent(int id) const { return _nodes[id].parent(); }
+    inline const std::vector<int>& nodeChildren(int id) const { return _nodes[id].children(); }
+    inline const std::vector<int>& nodePixels(int id) const { return _nodes[id].vertexIndexes(); }
+
+    std::vector<int> reconstructNode(int id);
+
   private:
-    void createNodes(const std::vector<int>& parent, const std::vector<int>& sortedIndex, const std::vector<T>& vertices);
+    void createNodes(const std::vector<int>& parent, const std::vector<int>& sortedIndices, const std::vector<T>& elements);
     void _reconstructNode(int id, std::vector<int>& rec);
   protected:
     std::vector<MTNode<T>> _nodes;
@@ -78,36 +78,36 @@ namespace pomar
 
   /* ========================= MORPHOLOGICAL TREE - TRANSVERSAL ================================ */
   template<class T>
-  MorphologicalTree<T>::MorphologicalTree(const std::vector<int>& parent, const std::vector<int>& sortedIndex,
-					       const std::vector<T>& vertices)
+  CTree<T>::CTree(const std::vector<int>& parent, const std::vector<int>& sortedIndices,
+					       const std::vector<T>& elements)
   {
-    createNodes(parent, sortedIndex, vertices);
+    createNodes(parent, sortedIndices, elements);
   }
-  
+
   /* ========================== MORPHOLOGICAL TREE - TRANSVERSAL ================================ */
   template<class T>
-  void MorphologicalTree<T>::transverseFromLeavesToRoot(std::function<void(const MTNode<T>&)> visit)
+  void CTree<T>::transverse(std::function<void(const MTNode<T>&)> visit)
   {
     for (int i = _nodes.size()-1; i >= 0; --i)
       visit(_nodes[i]);
   }
-						       
+
   /* ========================== MORPHOLOGICAL TREE - CREATE NODES =============================== */
   template<class T>
-  void MorphologicalTree<T>::createNodes(const std::vector<int> &parent, const std::vector<int> &sortedIndex,
-					  const std::vector<T> &vertices)
+  void CTree<T>::createNodes(const std::vector<int> &parent, const std::vector<int> &sortedIndices,
+					  const std::vector<T> &elements)
   {
     const int UNDEF = -1;
     std::vector<int> sortedLevelRoots;
-    _cmap.resize(vertices.size());
-   
+    _cmap.resize(elements.size());
+
     for (auto &p: _cmap)
       p = UNDEF;
 
-    for (int i = sortedIndex.size()-1; i >= 0; --i) {
-      auto p = sortedIndex[i];
-      if (vertices[parent[p]] != vertices[p] || parent[p] == p)
-	sortedLevelRoots.push_back(p);
+    for (int i = sortedIndices.size()-1; i >= 0; --i) {
+      auto p = sortedIndices[i];
+      if (elements[parent[p]] != elements[p] || parent[p] == p)
+	      sortedLevelRoots.push_back(p);
     }
 
     _nodes.resize(sortedLevelRoots.size());
@@ -123,7 +123,7 @@ namespace pomar
     for (size_t i = 1; i < sortedLevelRoots.size(); ++i) {
       auto p = sortedLevelRoots[i];
       _cmap[p] = i;
-      
+
       auto& node = _nodes[i];
       auto& parentNode = _nodes[_cmap[parent[p]]];
       node.parent(parentNode.id());
@@ -133,17 +133,17 @@ namespace pomar
       parentNode.addChild(node.id());
     }
 
-    for (size_t i = 0; i < vertices.size(); i++) {
+    for (size_t i = 0; i < elements.size(); i++) {
       if (_cmap[i] == UNDEF) {
-	_cmap[i] = _cmap[parent[i]];
-	_nodes[_cmap[i]].addVertexIndex(i);
+      	_cmap[i] = _cmap[parent[i]];
+      	_nodes[_cmap[i]].addVertexIndex(i);
       }
     }
   }
 
   /* ==================== MORPHOLOGICAL TREE - RECONSTRUCT NODE ========================== */
   template<class T>
-  std::vector<int> MorphologicalTree<T>::reconstructTreeNode(int id)
+  std::vector<int> CTree<T>::reconstructNode(int id)
   {
     std::vector<int> rec;
     this->_reconstructNode(id, rec);
@@ -151,10 +151,10 @@ namespace pomar
   }
 
   template<class T>
-  void MorphologicalTree<T>::_reconstructNode(int id, std::vector<int>& rec)
+  void CTree<T>::_reconstructNode(int id, std::vector<int>& rec)
   {
-    auto nodeVertices = getNodePixels(id);
-    auto children = getNodeChildren(id);
+    auto nodeVertices = nodePixels(id);
+    auto children = nodeChildren(id);
     rec.insert(std::end(rec), std::begin(nodeVertices), std::end(nodeVertices));
 
     for (auto c: children)
