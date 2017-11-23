@@ -10,11 +10,11 @@
 namespace pomar
 {
   template<class NT>
-  class MTNode
+  class CTNode
   {
   public:
-    MTNode();
-    MTNode(int id, NT level);
+    CTNode();
+    CTNode(int id, NT level);
 
     inline int id() const { return _id; }
     inline void id(int id) { _id = id; }
