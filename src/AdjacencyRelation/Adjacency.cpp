@@ -2,5 +2,5 @@
 
 namespace pomar
 {
-  const int AdjacencyRelation::NoAdjacentIndex = -1;
+  const int Adjacency::NoAdjacentIndex = -1;
 }
