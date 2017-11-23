@@ -60,11 +60,11 @@ namespace pomar
 
     void transverse(std::function<void(const CTNode<T>&)> visit);
 
-    inline size_t numberofNodes() const { return _nodes.size(); }
+    inline size_t numberOfNodes() const { return _nodes.size(); }
     inline const T& nodeLevel(int id) const { return _nodes[id].level(); }
     inline int nodeParent(int id) const { return _nodes[id].parent(); }
     inline const std::vector<int>& nodeChildren(int id) const { return _nodes[id].children(); }
-    inline const std::vector<int>& nodeElements(int id) const { return _nodes[id].elementIndexes(); }
+    inline const std::vector<int>& nodeElementIndices(int id) const { return _nodes[id].elementIndices(); }
 
     std::vector<int> reconstructNode(int id);
 
@@ -153,7 +153,7 @@ namespace pomar
   template<class T>
   void CTree<T>::_reconstructNode(int id, std::vector<int>& rec)
   {
-    auto nodeElements = nodeElements(id);
+    auto nodeElements = nodeElementIndices(id);
     auto children = nodeChildren(id);
     rec.insert(std::end(rec), std::begin(nodeElements), std::end(nodeElements));
 

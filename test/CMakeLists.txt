@@ -11,9 +11,9 @@ else()
 endif()
 
 set(SOURCES
-  src/AdjacencyRelation/Image2D/Image2DAdjacencyRelationByTranslating.cpp
-  src/MorphologicalTree/MorphologicalTree.cpp
-  src/MorphologicalTree/MaxTreeBuilder.cpp
+  src/AdjacencyRelation/AdjacencyByTranslating2D.cpp
+  src/ComponentTree/CTree.cpp
+  src/ComponentTree/MaxTreeBuilder.cpp
   src/Math/Point.cpp
   test.cpp)
 
