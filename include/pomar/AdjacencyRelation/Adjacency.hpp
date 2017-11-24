@@ -8,8 +8,9 @@
 namespace pomar
 {
   /**
-  * Abstract class which represents an graph adjacency of a set of vertices
-  * stored in a array such with indices from 0 up to the array's length.
+  * Abstract class which represents an graph adjacency
+  * stored in a array such that the indices of this array are vertex
+  * identification.
   */
   class Adjacency
   {
