@@ -9,26 +9,42 @@
 
 namespace pomar
 {
+
+  /**
+  * This class represents a component tree node in its compact representation.
+  * It stores a list of identification of the elements which
+  * represent its node and the full component tree node can be reconstructed using
+  * the elements of this node and the full representation of its children nodes.
+  * This class is not meant to be used outside the class CTree.
+  */
   template<class NT>
   class CTNode
   {
   public:
+    /** Default constructor. */
     CTNode();
+    /** Construct a component tree node with an id and level. */
     CTNode(int id, NT level);
 
-    inline int id() const { return _id; }
-    inline void id(int id) { _id = id; }
+    inline int id() const { return _id; } /**< Get node's id. */
+    inline void id(int id) { _id = id; } /**< Set node's id.  */
 
-    inline const NT& level() const { return _level; }
-    inline void level(const NT& level) { _level = level; }
+    inline const NT& level() const { return _level; } /**< Get node's level. */
+    inline void level(const NT& level) { _level = level; } /**< Set node's level. */
 
+    /** Get parent node id. */
     inline int parent() const { return _parent; }
+    /** Set parent node id. */
     inline void parent(int parent) { _parent = parent; }
 
+    /** Get an array with the id for each child node. */
     inline const std::vector<int>& children() const { return _children; }
+    /** Add a child node id. */
     inline void addChild(int child) { _children.push_back(child); }
 
+    /** Get the array with the id for each element stored in this node.  */
     inline const std::vector<int>& elementIndices() const { return _elementIndices; }
+    /** Add a id to the element set of this node.*/
     inline void addElementIndex(int elementIndex) { _elementIndices.push_back(elementIndex); }
   private:
     int _id;
@@ -50,27 +66,48 @@ namespace pomar
   {}
 
 
-  /* =================== ComponentTree TREE ==================================== */
+
+  /**
+  * This class represents a component tree using its compact representation.
+  */
   template<class T>
   class CTree
   {
   public:
+    /** Default constructor */
     CTree() {}
+
+    /** Construct a component tree using the parent array, an elements set and
+    *   the indices of the elements set ordered (this order define the type of
+    *   the tree such as max-tree or min-tree).
+    */
     CTree(const std::vector<int>& parent, const std::vector<int>& sortedIndices, const std::vector<T>& elements);
 
+    /** Transverse the tree from the leaves to the node calling the visit callback
+    *   for each node. This transverse guarantees that all children nodes are
+    *   visited before it visits theirs parent node.
+    */
     void transverse(std::function<void(const CTNode<T>&)> visit);
 
+    /** Get the number of nodes of the tree. */
     inline size_t numberOfNodes() const { return _nodes.size(); }
+
+    /** Get the level of the node identified by id. */
     inline const T& nodeLevel(int id) const { return _nodes[id].level(); }
+    /** Get parent id of the node identified by the id. */
     inline int nodeParent(int id) const { return _nodes[id].parent(); }
+    /** Get the children nodes id of the node identified by id. */
     inline const std::vector<int>& nodeChildren(int id) const { return _nodes[id].children(); }
+    /** Returns an array with the identification of each element stored in this node. */
     inline const std::vector<int>& nodeElementIndices(int id) const { return _nodes[id].elementIndices(); }
 
+    /** reconstruct the full component tree node identified by id. */
     std::vector<int> reconstructNode(int id);
 
   private:
     void createNodes(const std::vector<int>& parent, const std::vector<int>& sortedIndices, const std::vector<T>& elements);
     void _reconstructNode(int id, std::vector<int>& rec);
+
   protected:
     std::vector<CTNode<T>> _nodes;
     std::vector<int> _cmap;

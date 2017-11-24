@@ -11,48 +11,87 @@
 namespace pomar
 {
 
-/* ============================ COMPONENT TREE SORTER ======================================= */
+  /**
+  *  Abstract class which represents the sorter strategy in the component tree
+  *  build algorithm.
+  */
   template<class T>
   class CTSorter
   {
   public:
+    /** Abstract method to be implemented by the sorter strategy. */
     virtual std::vector<int> sort(const std::vector<T>& elements) const = 0;
 
   protected:
+    /** Useful method to encapsulate the STL sort algorithm. */
     std::vector<int> STLsort(const std::vector<T>& elements, std::function<bool(const T&, const T&)>) const;
   };
 
-
-  /* ============================ MAX TREE SORTER ================================================= */
+  /**
+  *  Max-tree sort strategy.
+  */
   template<class T>
   class MaxTreeSorter: public CTSorter<T>
   {
   public:
+    /** Return a array of indices orderered from the highest element value to
+    *   the lowest one.
+    */
     std::vector<int> sort(const std::vector<T>& elements) const;
 
   protected:
+    /**
+    *  Create a sorted array of indices orderered from the highest element value
+    *  to the lowest one using the counting sort algorithm.
+    */
     std::vector<int> countingSort(const std::vector<T>& elements) const;
   };
 
 
-  /* ================================= COMPONENT TREE BUILDER ================================== */
+  /**
+  *  Component Tree Builder.
+  */
   class CTBuilder
   {
   public:
-    enum class TreeType { MaxTree = 0, MinTree = 1 };
+    /** Component tree types enumeration. */
+    enum class TreeType {
+      MaxTree = 0, /**< Max-tree */
+      MinTree = 1  /**< Min-tree. */
+    };
 
+    /**
+    * Build a component tree of the type treeType and the graph with the
+    *   vertices equal to elements and the edges defined by the adjacency
+    *   relation adj.
+    */
     template<typename T>
     CTree<T> build(const std::vector<T> &elements, std::unique_ptr<Adjacency> adj,
 			        TreeType treeType);
 
+    /**
+    *   Build a component tree of the type treeType and the graph with the
+    *   vertices equal to elements and the edges defined by the adjacency
+    *   relation adj.
+    */
     template<typename T>
     CTree<T> build(const std::vector<T> &elements, std::shared_ptr<Adjacency> adj,
 			       TreeType treeType);
 
+    /**
+    *   Build a component tree of the graph with the
+    *   vertices equal to elements and the edges defined by the adjacency
+    *   relation adj using a sort strategy.
+    */
     template<typename T>
     CTree<T> build(const std::vector<T> &elements, std::unique_ptr<Adjacency> adj,
 			        std::unique_ptr<CTSorter<T>> sorter);
 
+    /**
+    *   Build a component tree of the graph with the
+    *   vertices equal to elements and the edges defined by the adjacency
+    *   relation adj using a sort strategy.
+    */
     template<typename T>
     CTree<T> build(const std::vector<T> &elements, std::shared_ptr<Adjacency> adj,
 			        std::unique_ptr<CTSorter<T>> sorter);
@@ -66,8 +105,10 @@ namespace pomar
     CTree<T> build(const std::vector<T> &elements, Adjacency *adj,
 			       TreeType treeType);
 
+    /** Algorithm find from Union-find data structure with path compression. */
     int findRoot(std::vector<int>& zpar, int x) const;
 
+    /** Make all elements of a node point to exactly one canonical element. */
     template<typename T>
     void canonizeTree(const std::vector<T>& elements, const std::vector<int> &sortedIndices, std::vector<int>& parent) const;
   };
