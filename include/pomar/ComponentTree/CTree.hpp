@@ -100,9 +100,21 @@ namespace pomar
     inline const std::vector<int>& nodeChildren(int id) const { return _nodes[id].children(); }
     /** Returns an array with the identification of each element stored in this node. */
     inline const std::vector<int>& nodeElementIndices(int id) const { return _nodes[id].elementIndices(); }
+    /** Return the id of the node which the element is stored */
+    inline int nodeByElement(int element) const { return _cmap[element]; }
 
-    /** reconstruct the full component tree node identified by id. */
+    /** Reconstruct the full component tree node identified by id. */
     std::vector<int> reconstructNode(int id);
+
+    /** Prune nodes which 'shouldPrune' is true. This function removes all nodes
+    *   which shouldPrune is true and all theirs decendents. This function
+    *   modifies the component tree object that calls it.
+    *   TODO: Cite the Lotufo's paper about Node array and Node Index
+    */
+    void prune(std::function<void(const CTNode<T>&)> shouldPrune);
+
+    /** Convert component tree to the representation of a array */
+    std::vector<T> convetToVector();
 
   private:
     void createNodes(const std::vector<int>& parent, const std::vector<int>& sortedIndices, const std::vector<T>& elements);
@@ -178,7 +190,7 @@ namespace pomar
     }
   }
 
-  /* ==================== MORPHOLOGICAL TREE - RECONSTRUCT NODE ========================== */
+  /* ==================== COMPONENT TREE - RECONSTRUCT NODE ========================== */
   template<class T>
   std::vector<int> CTree<T>::reconstructNode(int id)
   {
@@ -197,6 +209,46 @@ namespace pomar
     for (auto c: children)
       this->_reconstructNode(c, rec);
   }
+
+  /* ================== COMPONENT TREE - CONVERT TO VECTOR =============================== */
+  template<class T>
+  std::vector<T> CTree<T>::convetToVector()
+  {
+    std::vector<T> v(_cmap.size());
+    for (auto node: _nodes) {
+      for(auto e : node.elementIndices())
+        v[e] = node.level();
+    }
+
+    return v;
+  }
+
+  /* =================== PRUNNING ===================================================== */
+  template<class T>
+  void CTree<T>::prune(std::function<void(const CTNode<T>&)> shouldPrune)
+  {
+    std::vector<int> lut(_nodes.size());
+    std::vector<int> nearestAncestorKept(_nodes.size());
+
+    for (auto i = 0; i < lut.size(); i++) {
+      lut[i] = i;
+      nearestAncestorKept[i] = 0;
+    }
+
+    for (auto node : _nodes) {
+      if (shouldPrune(node)) {
+        int temp = nearestAncestorKept[node.parent()];
+        nearestAncestorKept[node.id()] = temp;
+        lut[node.id()] = lut[temp];
+      }
+      else {
+        nearestAncestorKept[node.id()] = node.id();
+        node.parent(nearestAncestorKept[node.parent()]);
+      }
+    }
+
+  }
+
 }
 
 #endif
