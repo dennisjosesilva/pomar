@@ -45,7 +45,7 @@ namespace pomar
     /** Remove a child node id*/
     inline void removeChild(int child) { _children.erase(std::remove(_children.begin(), _children.end(), child), _children.end()); }
 		/** Change the id of the child at position cpos */
-		inline void child(int cpos, int id) { _children[cpos] = id; }    
+		inline void child(int cpos, int id) { _children[cpos] = id; }
 
     /** Get the array with the id for each element stored in this node.  */
     inline const std::vector<int>& elementIndices() const { return _elementIndices; }
@@ -72,7 +72,7 @@ namespace pomar
     :_id(id), _level(level)
   {}
 
-  template<class NT>  
+  template<class NT>
   void CTNode<NT>::insertElementIndices(const std::vector<int>& indices)
   {
 		_elementIndices.insert(_elementIndices.end(), indices.begin(), indices.end());
@@ -133,8 +133,14 @@ namespace pomar
     void _reconstructNode(int id, std::vector<int>& rec);
 
 
+    std::vector<bool> removeChildrenAndReturnsPrunnedNodeMap(
+      std::function<bool(const CTNode<T>&)> shouldPrune);
 		void _prune(CTNode<T>& node, std::vector<bool>& prunnedNodes);
 		void _rprune(CTNode<T>& keptNode, CTNode<T>& nodeToPrune, std::vector<bool>& prunnedNodes);
+    void removePrunnedNodes(const std::vector<bool> &prunnedNodes);
+    void updateChildrenIdFromPrune(const std::vector<int> &lut);
+    std::vector<int> updateParentIdAndCreateLut(const std::vector<bool> &prunnedNodes);
+
   protected:
     std::vector<CTNode<T>> _nodes;
     std::vector<int> _cmap;
@@ -242,44 +248,22 @@ namespace pomar
   template<class T>
   void CTree<T>::prune(std::function<bool(const CTNode<T>&)> shouldPrune)
   {
+    auto prunnedNodes = removeChildrenAndReturnsPrunnedNodeMap(shouldPrune);
+    auto lut = updateParentIdAndCreateLut(prunnedNodes);
+    removePrunnedNodes(prunnedNodes);
+    updateChildrenIdFromPrune(lut);
+  }
+
+  template<class T>
+  std::vector<bool> CTree<T>::removeChildrenAndReturnsPrunnedNodeMap(
+    std::function<bool(const CTNode<T>&)> shouldPrune)
+  {
     std::vector<bool> prunnedNodes(_nodes.size(), false);
     for (auto& node : _nodes) {
 	    if (!prunnedNodes[node.id()] && shouldPrune(node))
-	    	_prune(node, prunnedNodes); 
+	    	_prune(node, prunnedNodes);
 		}
-		
-    /* Update nodes and parent id */
-		std::vector<int> lut(prunnedNodes.size());
-		int count = 0;
-		for (auto i = 0; i < _nodes.size(); i++) {
- 			auto node = _nodes[i];
-			if (prunnedNodes[i]) {
-				count++;
-				lut[i] = -1; 
-			}
-			else {
-				node.id(i - count);
-				lut[i] = node.id();
-				node.parent(lut[node.parent()]);	
-			}
-		}
- 
-		/* Remove prunned Nodes */		
-		count = 0;
-		for (auto i = 0; i < prunnedNodes.size(); i++) {
-			if (prunnedNodes[i]) {
-				_nodes.erase(_nodes.begin() + (i - count));
-				count++;
-			}
-		}
-
-		/* update children ids */
-		for (auto i = 0; i < _nodes.size(); i++) {
-				auto node = _nodes[i];
-				for(auto c = 0; c < node.children().size(); c++) {
-					node.child(c, lut[c]);
-				}
-		}
+    return prunnedNodes;
   }
 
   template<class T>
@@ -287,7 +271,7 @@ namespace pomar
   {
     auto& parent = _nodes[node.parent()];
     _rprune(parent, node, prunnedNodes);
-    parent.removeChild(node.id()); 
+    parent.removeChild(node.id());
   }
 
   template<class T>
@@ -298,6 +282,52 @@ namespace pomar
     for (auto c : nodeToPrune.children())
       _rprune(keptNode, _nodes[c], prunnedNodes);
   }
+
+  template<class T>
+  void CTree<T>::removePrunnedNodes(const std::vector<bool> &prunnedNodes)
+  {
+    int count = 0;
+    for (auto i = 0; i < prunnedNodes.size(); i++) {
+      if (prunnedNodes[i]) {
+        _nodes.erase(_nodes.begin() + (i - count));
+        count++;
+      }
+    }
+  }
+
+  template<class T>
+  void CTree<T>::updateChildrenIdFromPrune(const std::vector<int> &lut)
+  {
+    for (auto i = 0; i < _nodes.size(); i++) {
+				auto& node = _nodes[i];
+				for(auto c = 0; c < node.children().size(); c++) {
+					node.child(c, lut[c]);
+				}
+		}
+  }
+
+  template<class T>
+  std::vector<int> CTree<T>::updateParentIdAndCreateLut(
+    const std::vector<bool> &prunnedNodes)
+  {
+    std::vector<int> lut(prunnedNodes.size());
+    int count = 0;
+    for (auto i = 1; i < _nodes.size(); i++) {
+      auto& node = _nodes[i];
+      if (prunnedNodes[i]) {
+        count++;
+        lut[i] = -1;
+      }
+      else {
+        node.id(i - count);
+        lut[i] = node.id();
+        node.parent(lut[node.parent()]);
+      }
+    }
+    return lut;
+  }
+
+  //END PRUNE ALGORITHM
 
 }
 
