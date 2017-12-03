@@ -2,5 +2,6 @@ language: cpp
 
 script:
   - cmake -H. -BBuild
+  - cd Build
   - make -j 2
   - ctest -V -j 2
