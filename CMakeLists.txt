@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.0.2)
 project(pomar)
 set(CMAKE_BUILD_TYPE Realese)
 
@@ -18,3 +18,6 @@ set(SOURCES
 include(SetCompilerWarningAll.cmake)
 
 add_library(pomar STATIC ${SOURCES})
+
+enable_testing()
+add_subdirectory(test)

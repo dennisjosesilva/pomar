@@ -33,13 +33,13 @@ namespace pomar
     *  Create a 4-connected adjacency defined by the cross set
     (Cr = {(-1,0), (0,-1), (1, 0), (0,1)}) for a grid of size width x height.
     */
-    static std::unique_ptr<AdjacencyByTranslating2D> createAdjacency4(int width, int height);
+    static std::unique_ptr<Adjacency> createAdjacency4(int width, int height);
 
     /**
     *  Create a 8-connected adjacency defined by the square set
     (SQ = CR U {(-1,-1), (1,-1), (1,1), (-1,1)}) for a grid of size width x height.
     */
-    static std::unique_ptr<AdjacencyByTranslating2D> createAdjacency8(int width, int height);
+    static std::unique_ptr<Adjacency> createAdjacency8(int width, int height);
 
   private:
     int _width;

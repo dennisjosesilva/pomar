@@ -1,0 +1,6 @@
+language: cpp
+
+script:
+  - cmake -H. -BBuild
+  - make -j 2
+  - ctest -V -j 2

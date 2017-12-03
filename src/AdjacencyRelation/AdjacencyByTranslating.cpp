@@ -34,14 +34,14 @@ namespace pomar
     return _neighbours;
   }
 
-  std::unique_ptr<AdjacencyByTranslating2D>
+  std::unique_ptr<Adjacency>
   AdjacencyByTranslating2D::createAdjacency4(int width, int height)
   {
     std::vector<IPoint2D> t{{-1,0}, {0,-1}, {1, 0}, {0, 1}};
     return std::unique_ptr<AdjacencyByTranslating2D>(new AdjacencyByTranslating2D(width, height, t));
   }
 
-  std::unique_ptr<AdjacencyByTranslating2D>
+  std::unique_ptr<Adjacency>
   AdjacencyByTranslating2D::createAdjacency8(int width, int height)
   {
     std::vector<IPoint2D> t{{-1,-1}, {0,-1}, {1,-1}, {1,0}, {1,1}, {0,1}, {-1,1}, {-1,0}};

@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.0.2)
 project(pomart)
 
 include_directories(../include)
-link_directories(../build)
+link_directories(../Build)
 
 if(NOT CMAKE_VERSION VERSION_LESS 3.1)
     set(CMAKE_CXX_STANDARD 11)
@@ -18,6 +18,10 @@ set(SOURCES
   test.cpp)
 
 include(../SetCompilerWarningAll.cmake)
+include(./ParseAndAddCatchTests.cmake)
 
 add_executable(test.out ${SOURCES})
 target_link_libraries(test.out pomar)
+
+enable_testing()
+ParseAndAddCatchTests(test.out)

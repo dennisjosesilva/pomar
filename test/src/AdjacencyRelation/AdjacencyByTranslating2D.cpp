@@ -36,9 +36,7 @@ SCENARIO("AdjacencyByTranslating2D initialise correctly") {
   }
 }
 
-
-SCENARIO("AdjacencyByTranslating2D initialize 8-,4-connectivitily correctly") {
-
+SCENARIO("AdjacencyByTranslating2D initialise 8 and 4 connectivity correctly") {
   GIVEN("An 8-connected adjacency relation for an image of size (3,3)") {
     int width = 3,  height = 3;
     std::unique_ptr<Adjacency> adj = AdjacencyByTranslating2D::createAdjacency8(width, height);
