@@ -26,7 +26,7 @@ SCENARIO("Morphological Tree initialize correctly") {
     std::iota(sortedIndices.begin(), sortedIndices.end(), 0);
     std::sort(sortedIndices.begin(), sortedIndices.end(), [&elements](int i1, int i2) { return elements[i1] > elements[i2]; });
 
-    WHEN("initialized a Morphological tree (max-tree)") {
+    WHEN("A Component tree (max-tree) is initialized") {
       CTree<unsigned char> tree(parent, sortedIndices, elements);
 
       THEN("it should contains 5 nodes") {
@@ -55,6 +55,74 @@ SCENARIO("Morphological Tree initialize correctly") {
       	REQUIRE(tree.nodeChildren(2) == std::vector<int>({4}));
       	REQUIRE(tree.nodeChildren(3) == std::vector<int>());
       	REQUIRE(tree.nodeChildren(4) == std::vector<int>());
+      }
+      THEN("It should reconstruct the original elements array.") {
+        auto recElements = tree.convertToVector();
+        REQUIRE(recElements == elements);
+      }
+    }
+  }
+}
+
+SCENARIO("The Component class Should run the algorithms correctly") {
+  GIVEN("A Component Tree (max-tree)") {
+    std::vector<unsigned char> elements {
+        2,0,3,
+        2,1,3,
+	      7,0,3
+    };
+
+    std::vector<int> parent {
+        4,1,4,
+      	0,1,2,
+      	0,1,2
+    };
+
+    std::vector<int> sortedIndices(elements.size());
+    std::iota(sortedIndices.begin(), sortedIndices.end(), 0);
+    std::sort(sortedIndices.begin(), sortedIndices.end(), [&elements](int i1, int i2) {
+      return elements[i1] > elements[i2];
+    });
+
+    CTree<unsigned char> tree(parent, sortedIndices, elements);
+
+    WHEN("it is asked to prune the nodes with level greater or equal than 3") {
+      tree.prune([](const CTNode<unsigned char>& node) {
+        return node.level() >= 3;
+      });
+
+      THEN("The tree should contains 3 nodes") {
+        REQUIRE(tree.numberOfNodes() == 3);
+      }
+      THEN("it should navigate the nodes in the following (level, number of CNPs)  order: (2,3), (1,4), (0,2)") {
+        std::vector<int> levels {2,1,0};
+        std::vector<int> nCNPs  {3,4,2};
+        int i = 0;
+
+        tree.transverse([&levels, &nCNPs, &i] (const CTNode<unsigned char>& node) {
+            REQUIRE(levels[i] == node.level());
+            REQUIRE(nCNPs[i++] == node.elementIndices().size());
+        });
+      }
+      THEN("It should return parent equals to (-1,0,1) for the nodes (0,1,2)") {
+        REQUIRE(tree.nodeParent(0) == -1);
+        REQUIRE(tree.nodeParent(1) == 0);
+        REQUIRE(tree.nodeParent(2) == 1);
+      }
+      THEN("It should return children equals to ({1},{2},{}) for the nodes (0,1,2)") {
+        REQUIRE(tree.nodeChildren(0) == std::vector<int>({1}));
+        REQUIRE(tree.nodeChildren(1) == std::vector<int>({2}));
+        REQUIRE(tree.nodeChildren(2) == std::vector<int>());
+      }
+      THEN("It should reconstruct the pruned tree.") {
+        auto recElements = tree.convertToVector();
+        std::vector<unsigned char> expectedRec({
+          2,0,1,
+          2,1,1,
+          2,0,1
+        });
+
+        REQUIRE(recElements == expectedRec);
       }
     }
   }

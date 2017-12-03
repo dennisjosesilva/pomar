@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.9)
 project(pomart)
 
 include_directories(../include)
-link_directories(../)
+link_directories(../build)
 
 if(NOT CMAKE_VERSION VERSION_LESS 3.1)
     set(CMAKE_CXX_STANDARD 11)

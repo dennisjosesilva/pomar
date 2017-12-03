@@ -126,7 +126,7 @@ namespace pomar
     void prune(std::function<bool(const CTNode<T>&)> shouldPrune);
 
     /** Convert component tree to the representation of a array */
-    std::vector<T> convetToVector();
+    std::vector<T> convertToVector();
 
   private:
     void createNodes(const std::vector<int>& parent, const std::vector<int>& sortedIndices, const std::vector<T>& elements);
@@ -233,7 +233,7 @@ namespace pomar
 
   /* ================== COMPONENT TREE - CONVERT TO VECTOR =============================== */
   template<class T>
-  std::vector<T> CTree<T>::convetToVector()
+  std::vector<T> CTree<T>::convertToVector()
   {
     std::vector<T> v(_cmap.size());
     for (auto& node: _nodes) {
@@ -287,7 +287,7 @@ namespace pomar
   void CTree<T>::removePrunnedNodes(const std::vector<bool> &prunnedNodes)
   {
     int count = 0;
-    for (auto i = 0; i < prunnedNodes.size(); i++) {
+    for (size_t i = 0; i < prunnedNodes.size(); i++) {
       if (prunnedNodes[i]) {
         _nodes.erase(_nodes.begin() + (i - count));
         count++;
@@ -298,10 +298,11 @@ namespace pomar
   template<class T>
   void CTree<T>::updateChildrenIdFromPrune(const std::vector<int> &lut)
   {
-    for (auto i = 0; i < _nodes.size(); i++) {
+    for (size_t i = 0; i < _nodes.size(); i++) {
 				auto& node = _nodes[i];
-				for(auto c = 0; c < node.children().size(); c++) {
-					node.child(c, lut[c]);
+        auto children = node.children();
+				for(size_t c = 0; c < children.size(); c++) {
+          node.child(c, lut[children[c]]);
 				}
 		}
   }
@@ -312,7 +313,7 @@ namespace pomar
   {
     std::vector<int> lut(prunnedNodes.size());
     int count = 0;
-    for (auto i = 1; i < _nodes.size(); i++) {
+    for (size_t i = 1; i < _nodes.size(); i++) {
       auto& node = _nodes[i];
       if (prunnedNodes[i]) {
         count++;
@@ -328,7 +329,6 @@ namespace pomar
   }
 
   //END PRUNE ALGORITHM
-
 }
 
 #endif
