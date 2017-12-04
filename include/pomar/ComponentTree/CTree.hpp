@@ -121,11 +121,10 @@ namespace pomar
     /** Prune nodes which 'shouldPrune' is true. This function removes all nodes
     *   which shouldPrune is true and all theirs decendents. This function
     *   modifies the component tree object that calls it.
-    *   TODO: Cite the Lotufo's paper about Node array and Node Index
     */
     void prune(std::function<bool(const CTNode<T>&)> shouldPrune);
 
-    /** Convert component tree to the representation of a array */
+    /** Convert component tree to the representation array representation. */
     std::vector<T> convertToVector();
 
   private:
