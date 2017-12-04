@@ -62,6 +62,17 @@ namespace pomar
     std::vector<int> _elementIndices;
   };
 
+  /* ================ ALIASES ================================================== */
+  using UCCTNode = CTNode<unsigned char>;
+  using CCTNode = CTNode<char>;
+  using UICTNode = CTNode<unsigned int>;
+  using ICTNode = CTNode<int>;
+  using ULCTNode = CTNode<unsigned long>;
+  using LCTNode = CTNode<long>;
+  using FCTNode = CTNode<float>;
+  using DCTNode = CTNode<double>;
+
+
   /* =============== CTNODE CONTRUCTORS ========================================= */
   template<class NT>
   CTNode<NT>::CTNode()
@@ -144,6 +155,16 @@ namespace pomar
     std::vector<CTNode<T>> _nodes;
     std::vector<int> _cmap;
   };
+
+  /* ============================ ALIASES ====================================================== */
+  using UCCTree = CTree<unsigned char>;
+  using CCTree = CTree<char>;
+  using UICTree = CTree<unsigned int>;
+  using ICTree = CTree<int>;
+  using ULCTree = CTree<unsigned long>;
+  using LCTree =  CTree<long>;
+  using FCTree = CTree<float>;
+  using DCTree = CTree<double>;
 
   /* ========================= MORPHOLOGICAL TREE - TRANSVERSAL ================================ */
   template<class T>
