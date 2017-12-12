@@ -69,11 +69,11 @@ SCENARIO("The Component class Should run the algorithms correctly") {
     std::vector<unsigned char> elements {
         2,0,3,
         2,1,3,
-	      7,0,3
+	     7,0,3
     };
 
     std::vector<int> parent {
-        4,1,4,
+         4,1,4,
       	0,1,2,
       	0,1,2
     };
@@ -105,14 +105,14 @@ SCENARIO("The Component class Should run the algorithms correctly") {
         });
       }
       THEN("It should return parent equals to (-1,0,1) for the nodes (0,1,2)") {
-        /*REQUIRE(tree.nodeParent(0) == -1);
+        REQUIRE(tree.nodeParent(0) == -1);
         REQUIRE(tree.nodeParent(1) == 0);
-        REQUIRE(tree.nodeParent(2) == 1);*/
+        REQUIRE(tree.nodeParent(2) == 1);
       }
       THEN("It should return children equals to ({1},{2},{}) for the nodes (0,1,2)") {
-        /*REQUIRE(tree.nodeChildren(0) == std::vector<int>({1}));
+        REQUIRE(tree.nodeChildren(0) == std::vector<int>({1}));
         REQUIRE(tree.nodeChildren(1) == std::vector<int>({2}));
-        REQUIRE(tree.nodeChildren(2) == std::vector<int>());*/
+        REQUIRE(tree.nodeChildren(2) == std::vector<int>());
       }
       THEN("It should reconstruct the pruned tree.") {
         auto recElements = tree.convertToVector();
