@@ -4,6 +4,7 @@
 #include <functional>
 #include <cstddef>
 #include <algorithm>
+#include <iostream>
 
 #ifndef MORPHOLOGICAL_TREE_H_INCLUDED
 #define MORPHOLOGICAL_TREE_H_INCLUDED
@@ -189,12 +190,9 @@ namespace pomar
   {
     const int UNDEF = -1;
     std::vector<int> sortedLevelRoots;
-    _cmap.resize(elements.size());
+    _cmap.resize(elements.size(), UNDEF);
 
-    for (auto &p: _cmap)
-      p = UNDEF;
-
-    for (int i = sortedIndices.size()-1; i >= 0; --i) {
+    for (size_t i = 0; i < sortedIndices.size(); ++i) {
       auto p = sortedIndices[i];
       if (elements[parent[p]] != elements[p] || parent[p] == p)
 	      sortedLevelRoots.push_back(p);
@@ -202,22 +200,22 @@ namespace pomar
 
     _nodes.resize(sortedLevelRoots.size());
 
-    auto& root = _nodes.front();
-    auto rootCanonicalPixel = sortedLevelRoots.front();
+    auto p = sortedLevelRoots.front();
+    auto& root = _nodes[0];
+    _cmap[p] = 0;
     root.id(0);
-    root.parent(-1);
-    root.level(elements[rootCanonicalPixel]);
-    root.addElementIndex(rootCanonicalPixel);
-    _cmap[rootCanonicalPixel] = root.id();
+    root.level(elements[p]);
+    root.addElementIndex(p);
+    root.parent(UNDEF);
 
-    for (size_t i = 1; i < sortedLevelRoots.size(); ++i) {
+
+    for (size_t i = 1; i < sortedLevelRoots.size(); i++) {
       auto p = sortedLevelRoots[i];
       _cmap[p] = i;
-
       auto& node = _nodes[i];
       auto& parentNode = _nodes[_cmap[parent[p]]];
-      node.parent(parentNode.id());
       node.id(i);
+      node.parent(parentNode.id());
       node.level(elements[p]);
       node.addElementIndex(p);
       parentNode.addChild(node.id());
@@ -283,6 +281,7 @@ namespace pomar
 	    if (!prunnedNodes[node.id()] && shouldPrune(node))
 	    	_prune(node, prunnedNodes);
 		}
+
     return prunnedNodes;
   }
 
@@ -299,27 +298,27 @@ namespace pomar
   {
     keptNode.insertElementIndices(nodeToPrune.elementIndices());
     prunnedNodes[nodeToPrune.id()] = true;
-    for (auto c : nodeToPrune.children())
+    for (auto c : nodeToPrune.children()) {
       _rprune(keptNode, _nodes[c], prunnedNodes);
+    }
   }
 
   template<class T>
   void CTree<T>::removePrunnedNodes(const std::vector<bool> &prunnedNodes)
   {
-    int count = 0;
-    for (size_t i = 0; i < prunnedNodes.size(); i++) {
-      if (prunnedNodes[i]) {
-        _nodes.erase(_nodes.begin() + (i - count));
-        count++;
-      }
-    }
+    _nodes.erase(std::remove_if(_nodes.begin(), _nodes.end(),
+        [&prunnedNodes](CTNode<T>& node) {
+          return prunnedNodes[node.id()];
+        }), _nodes.end());
   }
 
   template<class T>
   void CTree<T>::updateChildrenIdFromPrune(const std::vector<int> &lut)
   {
     for (size_t i = 0; i < _nodes.size(); i++) {
-				auto& node = _nodes[i];
+        auto& node = _nodes[i];
+        node.id(lut[node.id()]);
+        node.parent(lut[node.parent()]);
         auto children = node.children();
 				for(size_t c = 0; c < children.size(); c++) {
           node.child(c, lut[children[c]]);
@@ -338,11 +337,6 @@ namespace pomar
       if (prunnedNodes[i]) {
         count++;
         lut[i] = -1;
-      }
-      else {
-        node.id(i - count);
-        lut[i] = node.id();
-        node.parent(lut[node.parent()]);
       }
     }
     return lut;

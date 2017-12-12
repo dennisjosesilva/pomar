@@ -173,24 +173,21 @@ namespace pomar
 						        CTSorter<T> *sorter)
   {
     const int UNDEF = -1;
-    std::vector<int> parent(elements.size());
+    std::vector<int> parent(elements.size(), UNDEF);
     std::vector<int> zpar(elements.size());
 
-    for (auto &p: zpar)
-      p = UNDEF;
+    auto sortedIndices = sorter->sort(elements);
 
-    std::vector<int> sortedIndices = sorter->sort(elements);
-
-    for (size_t i = 0; i < sortedIndices.size(); i++) {
+    for (int i = sortedIndices.size() - 1; i >= 0; i--) {
       auto p = sortedIndices[i];
-      zpar[p] = parent[p] = p;
-      std::vector<int> neighbours = adj->neighbours(p);
+      parent[p] = zpar[p] = p;
+      auto neighbours = adj->neighbours(p);
       for (auto n: neighbours) {
-	       if (n != Adjacency::NoAdjacentIndex && zpar[n] != UNDEF) {
-	          auto r = findRoot(zpar, n);
-	          if (r != p)
-	            zpar[r] = parent[r] = p;
-	       }
+        if (n != Adjacency::NoAdjacentIndex && parent[n] != UNDEF) {
+          auto r = findRoot(zpar, n);
+          if (r != p)
+            zpar[r] = parent[r] = p;
+        }
       }
     }
 
@@ -200,14 +197,11 @@ namespace pomar
   }
 
   /* ======================================== FIND ROOT ======================================================================= */
-  int CTBuilder::findRoot(std::vector<int>& zpar, int x) const
+  int CTBuilder::findRoot(std::vector<int>& zpar, int p) const
   {
-    if (zpar[x] == x)
-      return x;
-    else {
-      zpar[x] = findRoot(zpar, zpar[x]);
-      return zpar[x];
-    }
+    if (zpar[p] != p)
+      zpar[p] = findRoot(zpar, zpar[p]);
+    return zpar[p];
   }
 
   /* ================================== CANONIZE TREE ========================================================================== */
@@ -215,11 +209,11 @@ namespace pomar
   void CTBuilder::canonizeTree(const std::vector<T>& elements, const std::vector<int>& sortedIndices,
 					      std::vector<int>& parent) const
   {
-    for (int i = sortedIndices.size()-1; i >= 0; i--) {
-      auto v = sortedIndices[i];
-      auto q = parent[v];
-      if (elements[parent[q]] == elements[q])
-	      parent[v] = parent[q];
+    for (size_t i = 0; i < sortedIndices.size(); i++) {
+      auto p = sortedIndices[i];
+      auto q = parent[p];
+      if (elements[q] == elements[parent[q]])
+        parent[p] = parent[q];
     }
   }
 
@@ -228,10 +222,10 @@ namespace pomar
   template<class T>
   std::vector<int> MaxTreeSorter<T>::sort(const std::vector<T>& elements) const
   {
-    if (std::is_same<T, int>::value || std::is_same<T, unsigned int>::value || std::is_same<T, char>::value ||
+/*    if (std::is_same<T, int>::value || std::is_same<T, unsigned int>::value || std::is_same<T, char>::value ||
 	      std::is_same<T, unsigned char>::value || std::is_same<T, unsigned short>::value || std::is_same<T, short>::value)
       return std::move(countingSort(elements));
-    else
+    else*/
      return std::move(CTSorter<T>::STLsort(elements, [](const T& v1, const T& v2) { return v1 < v2; }));
   }
 
