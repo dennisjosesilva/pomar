@@ -145,13 +145,14 @@ namespace pomar
 
 
     std::vector<bool> removeChildrenAndReturnsPrunnedNodeMap(
-      std::function<bool(const CTNode<T>&)> shouldPrune);
-		void _prune(CTNode<T>& node, std::vector<bool>& prunnedNodes);
-		void _rprune(CTNode<T>& keptNode, CTNode<T>& nodeToPrune, std::vector<bool>& prunnedNodes);
+    		std::function<bool(const CTNode<T>&)> shouldPrune);
+	 void _prune(CTNode<T>& node, std::vector<bool>& prunnedNodes);
+	 void _rprune(CTNode<T>& keptNode, CTNode<T>& nodeToPrune, std::vector<bool>& prunnedNodes);
     void removePrunnedNodes(const std::vector<bool> &prunnedNodes);
     void updateChildrenIdFromPrune(const std::vector<int> &lut);
     std::vector<int> updateParentIdAndCreateLut(const std::vector<bool> &prunnedNodes);
-
+	 void updateCmap(const std::vector<int> lut);
+	 
   protected:
     std::vector<CTNode<T>> _nodes;
     std::vector<int> _cmap;
@@ -270,6 +271,7 @@ namespace pomar
     auto lut = updateParentIdAndCreateLut(prunnedNodes);
     removePrunnedNodes(prunnedNodes);
     updateChildrenIdFromPrune(lut);
+    updateCmap(lut);
   }
 
   template<class T>
@@ -297,6 +299,10 @@ namespace pomar
   void CTree<T>::_rprune(CTNode<T>& keptNode, CTNode<T>& nodeToPrune, std::vector<bool>& prunnedNodes)
   {
     keptNode.insertElementIndices(nodeToPrune.elementIndices());
+
+	 for (auto elem: nodeToPrune.elementIndices())
+		_cmap[elem] = keptNode.id();
+
     prunnedNodes[nodeToPrune.id()] = true;
     for (auto c : nodeToPrune.children()) {
       _rprune(keptNode, _nodes[c], prunnedNodes);
@@ -348,6 +354,13 @@ namespace pomar
 		  lut[i] = i - count;
     }
     return lut;
+  }
+
+  template<class T>
+  void CTree<T>::updateCmap(const std::vector<int> lut)
+  {
+     for(auto &c: _cmap)
+        c = lut[c];
   }
 
   //END PRUNE ALGORITHM

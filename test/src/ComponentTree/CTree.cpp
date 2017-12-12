@@ -124,6 +124,15 @@ SCENARIO("The Component class Should run the algorithms correctly") {
 
         REQUIRE(recElements == expectedRec);
       }
+      THEN("It should update the cmap") {
+         std::vector<int> elemId0 = {1,7};
+			std::vector<int> elemId1 = {2,4,5,8};
+         std::vector<int> elemId2 = {0,3,6};
+
+         for (auto elem : elemId0) REQUIRE(tree.nodeByElement(elem) == 0);
+         for (auto elem : elemId1) REQUIRE(tree.nodeByElement(elem) == 1);
+         for (auto elem : elemId2) REQUIRE(tree.nodeByElement(elem) == 2);
+      }
     }
   }
 }
