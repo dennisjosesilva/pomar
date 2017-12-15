@@ -1,3 +1,5 @@
+
+
 #include <pomar/AdjacencyRelation/Adjacency.hpp>
 #include <pomar/ComponentTree/CTree.hpp>
 #include <type_traits>
@@ -8,9 +10,11 @@
 #include <algorithm>
 #include <numeric>
 
+#ifndef POMAR_CTBUILDER_HPP_INCLUDED
+#define POMAR_CTBUILDER_HPP_INCLUDED
+
 namespace pomar
 {
-
   /**
   *  Abstract class which represents the sorter strategy in the component tree
   *  build algorithm.
@@ -34,19 +38,40 @@ namespace pomar
   class MaxTreeSorter: public CTSorter<T>
   {
   public:
-    /** Return a array of indices orderered from the highest element value to
-    *   the lowest one.
+    /**
+    *   Return an array of indices orderered from the lowest element value to
+    *   the highest one.
     */
     std::vector<int> sort(const std::vector<T>& elements) const;
 
   protected:
     /**
-    *  Create a sorted array of indices orderered from the highest element value
-    *  to the lowest one using the counting sort algorithm.
+    *  Create a sorted array of indices orderered from the lowest element value
+    *  to the highest one using the counting sort algorithm.
     */
     std::vector<int> countingSort(const std::vector<T>& elements) const;
   };
 
+  /**
+  *   Min-tree sort strategy
+  */
+  template<class T>
+  class MinTreeSorter: public CTSorter<T>
+  {
+  public:
+    /**
+    *   Return an of indices orderered fom the highest element value to the
+    *   lowest one.
+    */
+    std::vector<int> sort(const std::vector<T>& elements) const;
+
+  protected:
+    /**
+    * Create a sorted array of indices orderered from the highest element value
+    * to the lowest one using the counting sort algorithm.
+    */
+    std::vector<int> countingSort(const std::vector<T>& elements) const;
+  };
 
   /**
   *  Component Tree Builder.
@@ -131,7 +156,7 @@ namespace pomar
       }
       case CTBuilder::TreeType::MinTree:
       {
-      	std::unique_ptr<CTSorter<T>> minTreeSorter(new MaxTreeSorter<T>());
+      	std::unique_ptr<CTSorter<T>> minTreeSorter(new MinTreeSorter<T>());
       	return build(elements, adj, minTreeSorter.get());
       }
     }
@@ -222,10 +247,10 @@ namespace pomar
   template<class T>
   std::vector<int> MaxTreeSorter<T>::sort(const std::vector<T>& elements) const
   {
-/*    if (std::is_same<T, int>::value || std::is_same<T, unsigned int>::value || std::is_same<T, char>::value ||
+    if (std::is_same<T, int>::value || std::is_same<T, unsigned int>::value || std::is_same<T, char>::value ||
 	      std::is_same<T, unsigned char>::value || std::is_same<T, unsigned short>::value || std::is_same<T, short>::value)
       return std::move(countingSort(elements));
-    else*/
+    else
      return std::move(CTSorter<T>::STLsort(elements, [](const T& v1, const T& v2) { return v1 < v2; }));
   }
 
@@ -241,14 +266,13 @@ namespace pomar
       c = 0;
 
     for (size_t i = 0; i < elements.size(); i++)
-      counter[maxValue - elements[i]]++;
-
+      counter[elements[i]]++;
 
     for (int i = 1; i <= maxValue; i++)
       counter[i] += counter[i - 1];
 
     for (int i = elements.size() - 1; i >= 0; --i)
-      idx[--counter[maxValue - elements[i]]] = i;
+      idx[--counter[elements[i]]] = i;
 
     return std::move(idx);
   }
@@ -263,4 +287,40 @@ namespace pomar
     std::sort(idx.begin(), idx.end(), [&elements,cmp](int i1, int i2) { return cmp(elements[i1], elements[i2]); });
     return std::move(idx);
   }
+
+  /* ============================== MIN-TREE SORTER ==================================================================== */
+  template<class T>
+  std::vector<int> MinTreeSorter<T>::sort(const std::vector<T>& elements) const
+  {
+    if (std::is_same<T, int>::value || std::is_same<T, unsigned int>::value || std::is_same<T, char>::value ||
+	      std::is_same<T, unsigned char>::value || std::is_same<T, unsigned short>::value || std::is_same<T, short>::value)
+      return std::move(countingSort(elements));
+    else
+     return std::move(CTSorter<T>::STLsort(elements, [](const T& v1, const T& v2) { return v1 > v2; }));
+  }
+
+  /* ========================================== COUNTING SORT ======================================================== */
+  template<class T>
+  std::vector<int> MinTreeSorter<T>::countingSort(const std::vector<T>& elements) const
+  {
+    T maxValue = std::numeric_limits<T>::max();
+    std::vector<int> counter(maxValue + 1);
+    std::vector<int> idx(elements.size());
+
+    for (auto &c: counter)
+      c = 0;
+
+    for (size_t i = 0; i < elements.size(); i++)
+      counter[maxValue - elements[i]]++;
+
+    for (int i = 1; i <= maxValue; i++)
+      counter[i] += counter[i - 1];
+
+    for (int i = elements.size() - 1; i >= 0; --i)
+      idx[--counter[maxValue - elements[i]]] = i;
+
+    return std::move(idx);
+  }
 }
+
+#endif
