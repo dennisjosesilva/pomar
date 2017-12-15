@@ -19,7 +19,7 @@ The Pomar library can be built using cmake. For terminal user, you just need fol
 6. build your project. For example, if you are working with makefile just run: >$ make
 7. after build you can run the tests by running: >$ ctest
 8. If you do not want to compile the tests, in the step 6, you should compile just the library, for example, run: >$ make pomar
-9. after compile, pomar will generate a static library in the build directoty (libpomar), in order to integrate pomar in you project you should link this directory as well as indicate the include directory. For example, to compile in gcc you should use the following options: -std=c++11 -L${PomarDirectory}/build -I${PomarDirectory}/include -lpomar
+9. after compile, pomar will generate a static library in the build directory (libpomar), in order to integrate pomar in you project you should link this directory as well as indicate the include directory. For example, to compile in gcc you should use the following options: -std=c++11 -L${PomarDirectory}/build -I${PomarDirectory}/include -lpomar
 
 Features
 ---------
