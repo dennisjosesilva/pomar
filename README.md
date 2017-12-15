@@ -7,7 +7,7 @@ which provides a set of classes that abstracts common algorithms to create and h
 
 Building
 ------------
-Pomar has generic code using templates and code with no template at all. Initially, we choose to put all code which does not use templates in implementation file. In order to keep the compilation time as low as possible for the user.
+Pomar has generic code using templates and code with no template at all. Initially, we choose to put all code which does not use templates in implementation file, in order to keep the compilation time as low as possible for the user.
 
 The Pomar library can be built using cmake. For terminal user, you just need follow the steps below:
 
@@ -20,3 +20,13 @@ The Pomar library can be built using cmake. For terminal user, you just need fol
 7. after build you can run the tests by running: >$ ctest
 8. If you do not want to compile the tests, in the step 6, you should compile just the library, for example, run: >$ make pomar
 9. after compile, pomar will generate a static library in the build directoty (libpomar), in order to integrate pomar in you project you should link this directory as well as indicate the include directory. For example, to compile in gcc you should use the following options: -std=c++11 -L${PomarDirectory}/build -I${PomarDirectory}/include -lpomar
+
+Features
+---------
+
+* Max-tree and min-tree building
+* Component tree transverse
+* Component tree prune 
+* Component tree node reconstruction
+* Component tree reconstruction
+* Generic adjacency relation interface
