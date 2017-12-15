@@ -30,3 +30,9 @@ Features
 * Component tree node reconstruction
 * Component tree reconstruction
 * Generic adjacency relation interface
+
+Related libraries
+-------------------
+* iamxt: component tree library in python (https://github.com/rmsouza01/iamxt)
+* libtim: image processing library with component tree implementation (https://github.com/bnaegel/libtim)
+* mmlib4j: Mathematical morphology library with implementation of the component tree and tree of shapes in Java (https://github.com/wonderalexandre/mmlib4j)
