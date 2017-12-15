@@ -5,8 +5,10 @@
 Pomar is a library in C++ 11 to work with morphlogical trees. Its goal is to be a self-contained and easy to install library 
 which provides a set of classes that abstracts common algorithms to create and handle morphological trees.
 
-Get started
+Building
 ------------
+Pomar has generic code using templates and code with no template at all. Initially, we choose to put all code which does not use templates in implementation file. In order to keep the compilation time as low as possible for the user.
+
 The Pomar library can be built using cmake. For terminal user, you just need follow the steps below:
 
 1. install cmake (https://cmake.org/)
