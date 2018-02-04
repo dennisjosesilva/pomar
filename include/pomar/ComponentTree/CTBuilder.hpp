@@ -1,5 +1,3 @@
-
-
 #include <pomar/AdjacencyRelation/Adjacency.hpp>
 #include <pomar/ComponentTree/CTree.hpp>
 #include <type_traits>
@@ -10,8 +8,7 @@
 #include <algorithm>
 #include <numeric>
 
-#ifndef POMAR_CTBUILDER_HPP_INCLUDED
-#define POMAR_CTBUILDER_HPP_INCLUDED
+#pragma once
 
 namespace pomar
 {
@@ -35,7 +32,7 @@ namespace pomar
   *  Max-tree sort strategy.
   */
   template<class T>
-  class MaxTreeSorter: public CTSorter<T>
+  class MaxTreeSorter: public virtual CTSorter<T>
   {
   public:
     /**
@@ -56,7 +53,7 @@ namespace pomar
   *   Min-tree sort strategy
   */
   template<class T>
-  class MinTreeSorter: public CTSorter<T>
+  class MinTreeSorter: public virtual CTSorter<T>
   {
   public:
     /**
@@ -322,5 +319,3 @@ namespace pomar
     return std::move(idx);
   }
 }
-
-#endif

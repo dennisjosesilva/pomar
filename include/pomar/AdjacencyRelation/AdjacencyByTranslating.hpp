@@ -12,7 +12,7 @@ namespace pomar
   *  such that a vertex neighbourhood can be found by this vertex translation
   *  over the grid (this kind of adjacency is very common to 2D images).
   */
-  class AdjacencyByTranslating2D: public Adjacency
+  class AdjacencyByTranslating2D: public virtual Adjacency
   {
   public:
     /**
