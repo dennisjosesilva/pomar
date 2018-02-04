@@ -8,7 +8,7 @@
 namespace pomar
 {
   /**
-  *  Class which implements an adjacency relation over a grid of size  2x2
+  *  Class which implements an adjacency relation over a grid of size  \f$ width \times height \f$
   *  such that a vertex neighbourhood can be found by this vertex translation
   *  over the grid (this kind of adjacency is very common to 2D images).
   */

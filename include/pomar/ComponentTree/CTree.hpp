@@ -120,7 +120,7 @@ namespace pomar
     inline const T& nodeLevel(int id) const { return _nodes[id].level(); }
     /** Get parent id of the node identified by the id. */
     inline int nodeParent(int id) const { return _nodes[id].parent(); }
-    /** Get the children nodes id of the node identified by id. */
+    /** Get the children node ids of the node identified by id. */
     inline const std::vector<int>& nodeChildren(int id) const { return _nodes[id].children(); }
     /** Returns an array with the identification of each element stored in this node. */
     inline const std::vector<int>& nodeElementIndices(int id) const { return _nodes[id].elementIndices(); }
@@ -136,7 +136,7 @@ namespace pomar
     */
     void prune(std::function<bool(const CTNode<T>&)> shouldPrune);
 
-    /** Convert component tree to the representation array representation. */
+    /** Convert the component tree to the array representation. */
     std::vector<T> convertToVector();
 
   private:

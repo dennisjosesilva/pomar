@@ -8,8 +8,8 @@
 namespace pomar
 {
   /**
-  * Abstract class which represents an graph adjacency
-  * stored in a array such that the indices of this array are vertex
+  * Abstract class which represents a graph adjacency
+  * stored in an array such that the indices of this array are vertex
   * identification.
   */
   class Adjacency
@@ -22,7 +22,7 @@ namespace pomar
 
     /**
     * It returns the neighbourhood of the vertex identified by id. If
-    * the return has a element out of the vertex set it will be denoted
+    * the return has an element out of the vertex set it will be denoted
     * with value NoAdjacentIndex (-1).
     */
     virtual const std::vector<int>& neighbours(int id) = 0;

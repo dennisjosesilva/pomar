@@ -29,7 +29,7 @@ namespace pomar
     /** Sum this point with a point q  using + operator of the type T */
     Point2D<T> sum(const Point2D<T>& q) const;
 
-    /** Subtract point q from a this point using - operator of the type T */
+    /** Subtract point q from this point using - operator of the type T */
     Point2D<T> sub(const Point2D<T>& q) const;
 
     /** Check whether this point is equal to a point q or not. */
