@@ -8,8 +8,6 @@
 #include <algorithm>
 #include <numeric>
 
-#pragma once
-
 namespace pomar
 {
   /**
