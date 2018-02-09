@@ -1,4 +1,5 @@
 #include "../../catch.hpp"
+#include <pomar/ComponentTree/CTSorter.hpp>
 #include <pomar/ComponentTree/CTBuilder.hpp>
 #include <pomar/AdjacencyRelation/AdjacencyByTranslating.hpp>
 #include <memory>
@@ -7,22 +8,20 @@
 using namespace pomar;
 
 SCENARIO("Max-tree sorter should sort any given elements set.") {
-  GIVEN("An unsigned char element set with the following values (2,5,3,0,2,3,0,3)") {
-    MaxTreeSorter<unsigned char> sorter;
+  GIVEN("An unsigned char element set with the following values (2,5,3,0,2,3,0,3)") {    
     std::vector<unsigned char> v = {2,5,3,0,2,3,0,3};
     WHEN("Max-tree sorter sorts the array") {
-      auto sortedIndices = sorter.sort(v);
+      auto sortedIndices = maxTreeSort(v);
       THEN("the result should be (3,6,0,4,2,5,7,1)") {
         std::vector<int> expected = {3,6,0,4,2,5,7,1};
         REQUIRE (sortedIndices == expected);
       }
     }
   }
-  GIVEN("An long element set with the following values (2,5,3,0,2,3,0,3)") {
-    MaxTreeSorter<long> sorter;
+  GIVEN("An long element set with the following values (2,5,3,0,2,3,0,3)") {    
     std::vector<long> v = {2,5,3,0,2,3,0,3};
     WHEN("Max-tree sorter sorts the array") {
-      auto sortedIndices = sorter.sort(v);
+      auto sortedIndices = maxTreeSort(v);
       THEN("the result should be (3,6,0,4,2,5,7,1)") {
         std::vector<int> expected = {3,6,0,4,2,5,7,1};
         REQUIRE (sortedIndices == expected);
@@ -32,22 +31,20 @@ SCENARIO("Max-tree sorter should sort any given elements set.") {
 }
 
 SCENARIO("Min-tree sorter should sort any given elements set") {
-  GIVEN("An unsigned char element set with the following values (2,5,3,0,2,3,0,3)") {
-    MinTreeSorter<unsigned char> sorter;
+  GIVEN("An unsigned char element set with the following values (2,5,3,0,2,3,0,3)") {    
     std::vector<unsigned char> v = {2,5,3,0,2,3,0,3};
     WHEN("Min-tree sorter sorts the array") {
-      auto sortedIndices = sorter.sort(v);
+      auto sortedIndices = minTreeSort(v);
       THEN("The result should be (1,2,5,7,0,4,3,6)") {
         std::vector<int> expected = {1,2,5,7,0,4,3,6};
         REQUIRE(sortedIndices == expected);
       }
     }
   }
-  GIVEN("An long element set with the following values (2,5,3,0,2,3,0,3)") {
-    MinTreeSorter<long> sorter;
+  GIVEN("An long element set with the following values (2,5,3,0,2,3,0,3)") {    
     std::vector<long> v = {2,5,3,0,2,3,0,3};
     WHEN("Min-tree sorter sorts the array") {
-      auto sortedIndices = sorter.sort(v);
+      auto sortedIndices = minTreeSort(v);
       THEN("The result should be (1,2,5,7,0,4,3,6)") {
         std::vector<int> expected = {1,2,5,7,0,4,3,6};
         REQUIRE(sortedIndices == expected);
