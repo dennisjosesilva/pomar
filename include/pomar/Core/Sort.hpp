@@ -55,8 +55,9 @@ namespace pomar
       for (size_t i = 0; i < v.size(); i++)
         counter[v[i]]++;      
 
-      for (int i = 1; i <= maxValue; i++)
+      for (T i = 1; i < maxValue; i++)
         counter[i] += counter[i-1];
+      counter[maxValue] += counter[maxValue-1];
            
       for (int i = v.size()-1; i >= 0; --i)
         idx[--counter[v[i]]] = i;
@@ -74,8 +75,9 @@ namespace pomar
       for (size_t i = 0; i < v.size(); i++)
         counter[maxValue - v[i]]++;
 
-      for (int i = 1; i <= maxValue; i++)
+      for (T i = 1; i < maxValue; i++)
         counter[i] += counter[i - 1];
+      counter[maxValue] += counter[maxValue - 1];
 
       for (int i = v.size() - 1; i >= 0; --i)
         idx[--counter[maxValue - v[i]]] = i;

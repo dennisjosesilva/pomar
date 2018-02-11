@@ -13,8 +13,10 @@ endif()
 set(SOURCES
   src/AdjacencyRelation/AdjacencyByTranslating2D.cpp
   src/ComponentTree/CTree.cpp
+  src/ComponentTree/CTSorter.cpp
   src/ComponentTree/MaxTreeBuilder.cpp
   src/Math/Point.cpp
+  src/Core/Sort.cpp
   test.cpp)
 
 include(../SetCompilerWarningAll.cmake)

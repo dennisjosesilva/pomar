@@ -5,10 +5,11 @@
 		}
 	],
 	"settings": {
-		"files.associations": {
-			"array": "cpp",
-			"initializer_list": "cpp",
-			"utility": "cpp"
-		}
-	}
+    "files.associations": {
+      "array": "cpp",
+      "initializer_list": "cpp",
+      "utility": "cpp",
+      "limits": "cpp"
+    }
+  }
 }
