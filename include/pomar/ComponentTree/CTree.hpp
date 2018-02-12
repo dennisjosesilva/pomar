@@ -9,9 +9,10 @@
 #ifndef MORPHOLOGICAL_TREE_H_INCLUDED
 #define MORPHOLOGICAL_TREE_H_INCLUDED
 
+/** @file */
+
 namespace pomar
 {
-
   /**
   * This class represents a component tree node in its compact representation.
   * It stores a list of identification of the elements which
@@ -50,7 +51,7 @@ namespace pomar
 
     /** Get the array with the id for each element stored in this node.  */
     inline const std::vector<int>& elementIndices() const { return _elementIndices; }
-    /** Add a id to the element set of this node.*/
+    /** Add an id to the element set of this node.*/
     inline void addElementIndex(int elementIndex) { _elementIndices.push_back(elementIndex); }
     /** Insert a range of element indices to the elements set. */
     void insertElementIndices(const std::vector<int>& indices);
@@ -158,7 +159,7 @@ namespace pomar
     std::vector<int> _cmap;
   };
 
-  /* ============================ ALIASES ====================================================== */
+  /* ============================[ ALIASES ]====================================================== */
   using UCCTree = CTree<unsigned char>;
   using CCTree = CTree<char>;
   using UICTree = CTree<unsigned int>;
@@ -168,7 +169,7 @@ namespace pomar
   using FCTree = CTree<float>;
   using DCTree = CTree<double>;
 
-  /* ========================= MORPHOLOGICAL TREE - TRANSVERSAL ================================ */
+  /* =========================[ MORPHOLOGICAL TREE - TRANSVERSAL ]================================ */
   template<class T>
   CTree<T>::CTree(const std::vector<int>& parent, const std::vector<int>& sortedIndices,
 					       const std::vector<T>& elements)
@@ -176,7 +177,7 @@ namespace pomar
     createNodes(parent, sortedIndices, elements);
   }
 
-  /* ========================== MORPHOLOGICAL TREE - TRANSVERSAL ================================ */
+  /* ==========================[ MORPHOLOGICAL TREE - TRANSVERSAL ]================================ */
   template<class T>
   void CTree<T>::transverse(std::function<void(const CTNode<T>&)> visit)
   {
@@ -184,7 +185,7 @@ namespace pomar
       visit(_nodes[i]);
   }
 
-  /* ========================== MORPHOLOGICAL TREE - CREATE NODES =============================== */
+  /* ==========================[ MORPHOLOGICAL TREE - CREATE NODES ]=============================== */
   template<class T>
   void CTree<T>::createNodes(const std::vector<int> &parent, const std::vector<int> &sortedIndices,
 					  const std::vector<T> &elements)
@@ -230,7 +231,7 @@ namespace pomar
     }
   }
 
-  /* ==================== COMPONENT TREE - RECONSTRUCT NODE ========================== */
+  /* ====================[ COMPONENT TREE - RECONSTRUCT NODE ]========================== */
   template<class T>
   std::vector<int> CTree<T>::reconstructNode(int id)
   {
@@ -250,7 +251,7 @@ namespace pomar
       this->_reconstructNode(c, rec);
   }
 
-  /* ================== COMPONENT TREE - CONVERT TO VECTOR =============================== */
+  /* ==================[ COMPONENT TREE - CONVERT TO VECTOR ]=============================== */
   template<class T>
   std::vector<T> CTree<T>::convertToVector()
   {
@@ -263,7 +264,7 @@ namespace pomar
     return v;
   }
 
-  /* =================== PRUNNING ===================================================== */
+  /* ===================[ PRUNNING ]===================================================== */
   template<class T>
   void CTree<T>::prune(std::function<bool(const CTNode<T>&)> shouldPrune)
   {

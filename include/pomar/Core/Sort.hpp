@@ -7,19 +7,34 @@
 #ifndef SORT_HPP_INCLUDED
 #define SORT_HPP_INCLUDED
 
+/** @file */
+
 namespace pomar
 {
     /* =================== [INTERFACE ] ======================================== */
+    
+    /**
+     * Function which returns 'true' if the type T is unsigned char, unsigned short,
+     * unsigned int, char, short, int and bool, otherwise 'false'  */
     template<typename T>
     bool isLowSizeType();
 
+    /**
+     * Function which returns the indices of a vector 'v' sorted by the 
+     * function 'cmp' using the STL sorting algorithm.   */
     template<typename T>
     std::vector<int> STLsortIndex(const std::vector<T> &v, 
       std::function<bool(const T&, const T&)> cmp);
 
+    /**
+     * Function which returns the indices of a vector 'v' sorted in the
+     * increasing order using counting sort. */
     template<typename T>
     std::vector<int> incresingCountingSortIndex(const std::vector<T> &v);
 
+    /**
+     * Function which returns the indices of a vector 'v' sorted in the
+     * decreasing order using decreasing sort. */
     template<typename T>
     std::vector<int> decreasingCountingSortIndex(const std::vector<T> &v);                     
 

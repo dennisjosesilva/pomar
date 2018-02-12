@@ -1,9 +1,10 @@
 #ifndef POMAR_POINT_H_INCLUDED
 #define POMAR_POINT_H_INCLUDED
 
+/** @file */
+
 namespace pomar
 {
-
   /**
   * Class to represent 2D points of any type.
   */

@@ -9,10 +9,18 @@
 #include <algorithm>
 #include <numeric>
 
+#ifndef CTBUILDED_HPP_INCLUDED
+#define CTBUILDED_HPP_INCLUDED
+
+/** @file */
+
 namespace pomar
 {
   /**
-  *  Component Tree Builder.
+  * Component Tree Builder. This class represents a general algorithm to build 
+  * component tree. This class provides the build method and its overloads, such that,
+  * an user can build the component tree by providing an adjacency relation and 
+  * and sorting method (or a TreeType).
   */
   class CTBuilder
   {
@@ -60,10 +68,15 @@ namespace pomar
 			        std::function<std::vector<int>(const std::vector<T> &)> sort);
 
   protected:
+    /** 
+     * Build overload which receives an adjacency relation pointer and function for
+     * sorting. 
+    */
     template<typename T>
     CTree<T> build(const std::vector<T> &elements, Adjacency *adj,
 			       std::function<std::vector<int>(const std::vector<T> &)> sort);
 
+    /** Build overload which receives an adjacency relation pointer and a TreeType. */
     template<typename T>
     CTree<T> build(const std::vector<T> &elements, Adjacency *adj,
 			       TreeType treeType);
@@ -77,11 +90,11 @@ namespace pomar
   };
 
 
-  /* ====================================  IMPLEMENTATION ============================================================= */
+  /* ====================================[ IMPLEMENTATION ]============================================================= */
 
-  /* ============================== COMPONENT TREE BUILDER ======================================================== */
+  /* ==============================[ COMPONENT TREE BUILDER ]======================================================== */
 
-  /* ============================== BUILD FROM TREE TYPE  ============================================================== */
+  /* ==============================[ BUILD FROM TREE TYPE ]============================================================== */
   template<typename T>
   CTree<T> CTBuilder::build(const std::vector<T> &elements, Adjacency *adj,
 			        TreeType treeType)
@@ -115,7 +128,7 @@ namespace pomar
     return build(elements, adj.get(), treeType);
   }
 
-  /* ======================================= BUILD FROM SORTER OVERLOADS =============================================== */
+  /* =======================================[ BUILD FROM SORTER OVERLOADS ]=============================================== */
   template<typename T>
   CTree<T> CTBuilder::build(const std::vector<T> &elements, std::unique_ptr<Adjacency> adj,
 			        std::function<std::vector<int>(const std::vector<T> &)> sort)
@@ -130,7 +143,7 @@ namespace pomar
     return build(elements, adj.get(), sort);
   }
 
-  /* ======================================== BUILDING ALGORITHM  ====================================================== */
+  /* ========================================[ BUILDING ALGORITHM ]====================================================== */
   template<typename T>
   CTree<T> CTBuilder::build(const std::vector<T> &elements, Adjacency *adj,
 						        std::function<std::vector<int>(const std::vector<T> &)> sort)
@@ -159,7 +172,7 @@ namespace pomar
     return CTree<T>(parent, sortedIndices, elements);
   }
 
-  /* ======================================== FIND ROOT ======================================================================= */
+  /* ========================================[ FIND ROOT ]======================================================================= */
   int CTBuilder::findRoot(std::vector<int>& zpar, int p) const
   {
     if (zpar[p] != p)
@@ -167,7 +180,7 @@ namespace pomar
     return zpar[p];
   }
 
-  /* ================================== CANONIZE TREE ========================================================================== */
+  /* ==================================[ CANONIZE TREE ]========================================================================== */
   template<typename T>
   void CTBuilder::canonizeTree(const std::vector<T>& elements, const std::vector<int>& sortedIndices,
 					      std::vector<int>& parent) const
@@ -180,3 +193,5 @@ namespace pomar
     }
   }
 }
+
+#endif

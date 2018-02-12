@@ -9,11 +9,19 @@
 #ifndef CTSORTER_HPP_INCLUDED
 #define CTSORTER_HPP_INCLUDED
 
+/** @file */
+
 namespace pomar
 {
+  /** 
+   * Function used to sort the pixels of an image in the component tree building algorithm, 
+   * such that, the resulting tree is the max-tree. */
   template<typename T>
   std::vector<int> maxTreeSort(const std::vector<T> &elements);
 
+  /**
+   * Function used to sort the pixels of an image in the component tree building algorithm,
+   * such that, the resulting tree is the min-tree. */
   template<typename T>
   std::vector<int> minTreeSort(const std::vector<T> &elements);
 
