@@ -15,6 +15,7 @@ set(SOURCES
   src/ComponentTree/CTree.cpp
   src/ComponentTree/CTSorter.cpp
   src/ComponentTree/MaxTreeBuilder.cpp
+  src/Attribute/AttributeCollection.cpp
   src/Math/Point.cpp
   src/Core/Sort.cpp
   test.cpp)

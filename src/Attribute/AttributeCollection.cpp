@@ -32,5 +32,6 @@ namespace pomar
   {
     _attrIndex.clear();
     _values.clear();
+    _nextIndex = 0;
   }
 }
