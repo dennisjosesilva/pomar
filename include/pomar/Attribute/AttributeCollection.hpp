@@ -21,7 +21,6 @@ namespace pomar
     AttributeCollection();
 
     /* ==================== INLINE METHOD ================================================ */    
-    inline void clear(int attrIndex) { _values[attrIndex].clear(); }
     int attrIndex(AttrType type) { return _attrIndex[type]; }
 
     /* ==================== METHODS ====================================================== */
