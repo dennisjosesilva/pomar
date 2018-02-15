@@ -13,7 +13,8 @@ endif()
 
 set(SOURCES
   src/AdjacencyRelation/AdjacencyByTranslating.cpp
-  src/AdjacencyRelation/Adjacency.cpp)
+  src/AdjacencyRelation/Adjacency.cpp
+  src/Attribute/AttributeCollection.cpp)
 
 include(SetCompilerWarningAll.cmake)
 
