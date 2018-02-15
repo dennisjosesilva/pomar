@@ -112,7 +112,7 @@ namespace pomar
     *   for each node. This transverse guarantees that all children nodes are
     *   visited before it visits theirs parent node.
     */
-    void transverse(std::function<void(const CTNode<T>&)> visit);
+    void transverse(std::function<void(const CTNode<T>&)> visit) const;
 
     /** Get the number of nodes of the tree. */
     inline size_t numberOfNodes() const { return _nodes.size(); }
@@ -127,7 +127,8 @@ namespace pomar
     inline const std::vector<int>& nodeElementIndices(int id) const { return _nodes[id].elementIndices(); }
     /** Return the id of the node which the element is stored */
     inline int nodeByElement(int element) const { return _cmap[element]; }
-
+    /** Return a node with the id passed by the parameter  */
+    inline const CTNode<T>& node(int id) const { return _nodes[id]; }
     /** Reconstruct the full component tree node identified by id. */
     std::vector<int> reconstructNode(int id);
 
@@ -179,7 +180,7 @@ namespace pomar
 
   /* ==========================[ MORPHOLOGICAL TREE - TRANSVERSAL ]================================ */
   template<class T>
-  void CTree<T>::transverse(std::function<void(const CTNode<T>&)> visit)
+  void CTree<T>::transverse(std::function<void(const CTNode<T>&)> visit) const
   {
     for (int i = _nodes.size()-1; i >= 0; --i)
       visit(_nodes[i]);
