@@ -60,6 +60,11 @@ SCENARIO("Morphological Tree initialize correctly") {
         auto recElements = tree.convertToVector();
         REQUIRE(recElements == elements);
       }
+      THEN("It should return an the node with correct id.") {
+        REQUIRE(tree.node(0).id() == 0); REQUIRE(tree.node(1).id() == 1);
+        REQUIRE(tree.node(2).id() == 2); REQUIRE(tree.node(3).id() == 3);
+        REQUIRE(tree.node(4).id() == 4);
+      }
     }
   }
 }
@@ -125,13 +130,18 @@ SCENARIO("The Component class Should run the algorithms correctly") {
         REQUIRE(recElements == expectedRec);
       }
       THEN("It should update the cmap") {
-         std::vector<int> elemId0 = {1,7};
-			std::vector<int> elemId1 = {2,4,5,8};
-         std::vector<int> elemId2 = {0,3,6};
+        std::vector<int> elemId0 = {1,7};
+			  std::vector<int> elemId1 = {2,4,5,8};
+        std::vector<int> elemId2 = {0,3,6};
 
-         for (auto elem : elemId0) REQUIRE(tree.nodeByElement(elem) == 0);
-         for (auto elem : elemId1) REQUIRE(tree.nodeByElement(elem) == 1);
-         for (auto elem : elemId2) REQUIRE(tree.nodeByElement(elem) == 2);
+        for (auto elem : elemId0) REQUIRE(tree.nodeByElement(elem) == 0);
+        for (auto elem : elemId1) REQUIRE(tree.nodeByElement(elem) == 1);
+        for (auto elem : elemId2) REQUIRE(tree.nodeByElement(elem) == 2);
+      }
+      THEN("It should return an the node with correct id.") {
+        REQUIRE(tree.node(0).id() == 0); REQUIRE(tree.node(1).id() == 1);
+        REQUIRE(tree.node(2).id() == 2); REQUIRE(tree.node(3).id() == 3);
+        REQUIRE(tree.node(4).id() == 4);
       }
     }
   }
