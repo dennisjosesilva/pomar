@@ -21,16 +21,16 @@ SCENARIO("AttributeCollection stores a collection of attributes for a component 
         REQUIRE(attrs.attrIndex(AttrType::PERIMETER) == 0);
       }
     }
-    WHEN("Set value 42.0 at node id 25 for attribute Area using operator []") {
-      attrs[attrs.attrIndex(AttrType::AREA)][25] = 42.0;
+    WHEN("Set value 42.0 at node id 5 for attribute Area using operator []") {
+      attrs[attrs.attrIndex(AttrType::AREA)][5] = 42.0;
       THEN("It should return 42.0 after access id 25 of attribute area using operator []") {
-        REQUIRE(attrs[attrs.attrIndex(AttrType::AREA)][25] == 42.0);
+        REQUIRE(attrs[attrs.attrIndex(AttrType::AREA)][5] == 42.0);
       }
     }
-    WHEN("set 42.0 at node id 25 for attribute PERIMETER using function set.") {
-      attrs.set(attrs.attrIndex(AttrType::PERIMETER), 25, 42.0);
-      THEN("get 42.0 at node id 25 for attribute PERIMETER using function get.") {
-        REQUIRE(attrs.get(attrs.attrIndex(AttrType::PERIMETER), 25) == 42.0);
+    WHEN("set 42.0 at node id 5 for attribute PERIMETER using function set.") {
+      attrs.set(attrs.attrIndex(AttrType::PERIMETER), 5, 42.0);
+      THEN("get 42.0 at node id 5 for attribute PERIMETER using function get.") {
+        REQUIRE(attrs.get(attrs.attrIndex(AttrType::PERIMETER), 5) == 42.0);
       }
     }
   }

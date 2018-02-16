@@ -27,21 +27,21 @@ namespace pomar
       std::function<void(AttributeCollection&, const CTNode<T>&)> pPreProcess,
       std::function<void(AttributeCollection&, const CTNode<T>&, const CTNode<T>&)> pMerge,
       std::function<void(AttributeCollection&, const CTNode<T>&)> pPostProcess,
-      std::function<AttributeCollection(const CTree<T>&)> setUp = 
-        [](const CTree<T>& ct) { return AttributeCollection(); });
+      std::function<void(AttributeCollection&, const CTree<T>&)> setUp = 
+        [](AttributeCollection& attrs, const CTree<T>& ct) { });
 
-    AttributeCollection doCompute(const CTree<T> &ct);    
+    AttributeCollection doCompute(AttributeCollection &attrs, const CTree<T> &ct);    
 
-    AttributeCollection setUp(const CTree<T> &ct);
+    void setUp(AttributeCollection &attrs, const CTree<T> &ct);
     void preProcess(AttributeCollection &attrs, const CTNode<T> &node);
     void merge(AttributeCollection &attrs, const CTNode<T> &node, const CTNode<T> &parent);
     void postProcess(AttributeCollection &attrs, const CTNode<T> &node);
 
-  private:   
-    std::function<AttributeCollection(const CTree<T>&)> _setUp;
+  private:       
     std::function<void(AttributeCollection&, const CTNode<T>&)> _preProcess;
     std::function<void(AttributeCollection&, const CTNode<T>&, const CTNode<T>&)> _merge;
     std::function<void(AttributeCollection&, const CTNode<T>&)> _postProcess;
+    std::function<void(AttributeCollection&, const CTree<T>&)> _setUp;
   };
 
   template<class T>
@@ -55,7 +55,7 @@ namespace pomar
     void push(std::unique_ptr<IncrementalAttributeComputer<T>> attrComputer);
     void clear();
 
-    void setUp(const CTree<T> &ct);
+    void setUp(AttributeCollection &attrs, const CTree<T> &ct);
     void preProcess(AttributeCollection &attrs, const CTNode<T> &node);
     void merge(AttributeCollection &attrs, const CTNode<T> &node, const CTNode<T> &parent);
     void postProcess(AttributeCollection &attrs, const CTNode<T> &node);
@@ -73,7 +73,8 @@ namespace pomar
   template<class T>
   AttributeCollection AttributeComputer<T>::compute(const CTree<T> &ct)
   {
-    return this->underlying().doCompute(ct);
+    AttributeCollection attrs;
+    return this->underlying().doCompute(attrs, ct);
   }  
 
   /* ======================= [Incremental Attribute Computer ] ================================== */
@@ -82,14 +83,14 @@ namespace pomar
       std::function<void(AttributeCollection&, const CTNode<T>&)> pPreProcess,
       std::function<void(AttributeCollection&, const CTNode<T>&, const CTNode<T>&)> pMerge,
       std::function<void(AttributeCollection&, const CTNode<T>&)> pPostProcess,
-      std::function<AttributeCollection(const CTree<T>&)> pSetUp)
+      std::function<void(AttributeCollection&, const CTree<T>&)> pSetUp)
       :_preProcess{pPreProcess}, _merge{pMerge}, _postProcess{pPostProcess}, _setUp{pSetUp}
   {}
 
   template<class T>
-  AttributeCollection IncrementalAttributeComputer<T>::setUp(const CTree<T> &ct)
+  void IncrementalAttributeComputer<T>::setUp(AttributeCollection &attrs, const CTree<T> &ct)
   {
-    return this->_setUp(ct);
+    return this->_setUp(attrs, ct);
   }
 
   template<class T>
@@ -112,18 +113,18 @@ namespace pomar
   }
 
   template<class T>
-  AttributeCollection IncrementalAttributeComputer<T>::doCompute(const CTree<T> &ct)
+  AttributeCollection IncrementalAttributeComputer<T>::doCompute(AttributeCollection &attrs, const CTree<T> &ct)
   {
-    auto attrCollection = this->setUp(ct);
-    ct.transverse([this, &ct, &attrCollection](const CTNode<T> &node) {
-      this->preProcess(attrCollection, node);
+    this->setUp(attrs, ct);
+    ct.transverse([this, &ct, &attrs](const CTNode<T> &node) {
+      this->preProcess(attrs, node);
       if (node.parent() != -1) {
         const auto& nparent = ct.node(node.parent());
-        this->merge(attrCollection, node, nparent);
+        this->merge(attrs, node, nparent);
       }
-      this->postProcess(attrCollection, node);
+      this->postProcess(attrs, node);
     });
-    return attrCollection;
+    return attrs;
   }
 
   /* ====================== [ INCREMENTAL ATTRIBUTE COMPUTER ] ======================================  */
@@ -150,17 +151,17 @@ namespace pomar
   }
 
   template<class T>
-  void IncrementalAttributeComputerCollection<T>::setUp(const CTree<T> &ct)
+  void IncrementalAttributeComputerCollection<T>::setUp(AttributeCollection& attrs, const CTree<T> &ct)
   {
-    for (auto c : _attrComputers)
-      c->setUp(ct);
+    for (auto &c : _attrComputers)
+      c->setUp(attrs, ct);
   }
 
   template<class T>
   void IncrementalAttributeComputerCollection<T>::preProcess(AttributeCollection &attrs, 
     const CTNode<T> &node)
   {
-    for (auto c : _attrComputers)
+    for (auto &c : _attrComputers)
       c->preProcess(attrs, node);
   }
 
@@ -168,7 +169,7 @@ namespace pomar
   void IncrementalAttributeComputerCollection<T>::merge(AttributeCollection &attrs, 
     const CTNode<T> &node, const CTNode<T> &parent)
   {
-    for (auto c: _attrComputers)
+    for (auto &c: _attrComputers)
       c->merge(attrs, node, parent);
   }
 
@@ -176,7 +177,7 @@ namespace pomar
   void IncrementalAttributeComputerCollection<T>::postProcess(AttributeCollection &attrs,
     const CTNode<T> &node)
   {
-    for (auto c : _attrComputers)
+    for (auto &c : _attrComputers)
       c->postProcess(attrs, node);
   }
 
@@ -184,15 +185,16 @@ namespace pomar
   AttributeCollection 
   IncrementalAttributeComputerCollection<T>::compute(const CTree<T> &ctree)
   {
-    auto computer = toIncrementalAttributeComputer(ctree);
-    return computer->doCompute(ctree);
+    AttributeCollection attrs;
+    auto computer = toIncrementalAttributeComputer();
+    return computer->doCompute(attrs, ctree);
   }
 
   template<class T>
   std::unique_ptr<IncrementalAttributeComputer<T>> 
   IncrementalAttributeComputerCollection<T>::toIncrementalAttributeComputer()
   {
-    auto mySetup = [this] (const CTree<T> &ct) { return this->setUp(ct); };
+    auto mySetup = [this] (AttributeCollection &attrs, const CTree<T> &ct) {  this->setUp(attrs, ct); };
     auto myPreProcess = [this](AttributeCollection &attrs, const CTNode<T> &node) {
       this->preProcess(attrs, node);
     };

@@ -14,7 +14,7 @@ namespace pomar
   class AreaAttributeComputer
   {
   public:
-    AttributeCollection setUp(const CTree<T> &ct);
+    void setUp(AttributeCollection &attrs, const CTree<T> &ct);
     void preProcess(AttributeCollection& attrs, const CTNode<T> &node);
     void merge(AttributeCollection &attrs, const CTNode<T> &node, 
       const CTNode<T> &parent);
@@ -30,12 +30,10 @@ namespace pomar
   /* ===================== [IMPLEMENTATION ] ================================================= */
   /* ================ [ AREA ATTRIBUTE COMPUTER ] ============================================ */
   template<class T>
-  AttributeCollection AreaAttributeComputer<T>::setUp(const CTree<T> &ct)
+  void AreaAttributeComputer<T>::setUp(AttributeCollection &attrs, const CTree<T> &ct)
   { 
-    AttributeCollection attrs;
     attrs.push(AttrType::AREA, ct.numberOfNodes());
     _myIndex = attrs.attrIndex(AttrType::AREA);
-    return attrs;
   }
 
   template<class T>
@@ -62,14 +60,15 @@ namespace pomar
   AttributeCollection AreaAttributeComputer<T>::compute(const CTree<T> &ct)
   {
     auto computer = toIncrementalAttributeComputer();
-    return computer->doCompute(ct);
+    AttributeCollection attrs;
+    return computer->doCompute(attrs, ct);
   }
 
   template<class T>
   std::unique_ptr<IncrementalAttributeComputer<T>> 
     AreaAttributeComputer<T>::toIncrementalAttributeComputer()
   {
-    auto mySetup = [this](const CTree<T> &ct) { return this->setUp(ct); };
+    auto mySetup = [this](AttributeCollection &attrs, const CTree<T> &ct) { this->setUp(attrs, ct); };
     auto myPreProcess = [this](AttributeCollection& attrs, const CTNode<T> &node) {
       this->preProcess(attrs, node);
     };
