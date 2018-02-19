@@ -791,6 +791,7 @@ WARN_LOGFILE           =
 # Note: If this tag is empty the current directory is searched.
 
 INPUT                  = ../include/pomar/Math \
+                         ../include/pomar/Attribute \
                          ../include/pomar/ComponentTree \
                          ../include/pomar/AdjacencyRelation \
                          ../include/pomar/Core

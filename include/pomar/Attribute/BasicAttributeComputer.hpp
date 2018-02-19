@@ -8,21 +8,31 @@
 #ifndef BASIC_ATTRIBUTE_COMPUTER_HPP_INCLUDED
 #define BASIC_ATTRIBUTE_COMPUTER_HPP_INCLUDED
 
+/** @file */
+
 namespace pomar
 {
+  /** Class which computes area for component tree incrementally. */
   template<class T>
   class AreaAttributeComputer
   {
   public:
+    /** 
+     * Set up AttributeCollection 'attrs' to store area for each node of the 
+     * component tree 'ct'. */
     void setUp(AttributeCollection &attrs, const CTree<T> &ct);
+    /** 'PreProcess' function of the incremental algorithm to compute area.  */
     void preProcess(AttributeCollection& attrs, const CTNode<T> &node);
+    /** 'merge' function of the incremental algorithm to compute area.  */
     void merge(AttributeCollection &attrs, const CTNode<T> &node, 
       const CTNode<T> &parent);
+    /** 'postProcess' function of the incremental algorithm to compute area.  */
     void postProcess(AttributeCollection &attrs, const CTNode<T> &node);
 
+    /** Compute area for each component tree 'ct' node. */
     AttributeCollection compute(const CTree<T> &ct);
+    /** Convert this instance to an incremental attribute computer.*/
     std::unique_ptr<IncrementalAttributeComputer<T>> toIncrementalAttributeComputer();
-
   private:
     int _myIndex;
   };
