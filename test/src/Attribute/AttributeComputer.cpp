@@ -1,6 +1,6 @@
 #include "../../catch.hpp"
 #include <pomar/Attribute/AttributeComputer.hpp>
-#include <pomar/Attribute/BasicAttributeComputer.hpp>
+#include <pomar/Attribute/AttributeComputerBasic.hpp>
 #include <numeric>
 #include <algorithm>
 
