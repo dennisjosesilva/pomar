@@ -17,8 +17,9 @@ set(SOURCES
   src/ComponentTree/MaxTreeBuilder.cpp  
   src/Attribute/AttributeCollection.cpp  
   src/Attribute/AttributeComputer.cpp
-  src/Attribute/BasicAttributeComputer.cpp
+  src/Attribute/BasicAttributeComputer.cpp  
   src/Math/Point.cpp
+  src/Core/PixelIndexer.cpp
   src/Core/Sort.cpp  
   test.cpp)
 
