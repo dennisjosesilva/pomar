@@ -64,9 +64,10 @@ SCENARIO("Component tree builder should be built correctly.") {
     auto height = 3;
     std::unique_ptr<Adjacency> adj = AdjacencyByTranslating2D::createAdjacency4(width, height);
     CTBuilder builder;
+    auto meta = std::make_shared<CTMetaImage2D>(width, height, 1);
 
     WHEN ("The builder builds a max-tree") {
-      auto tree = builder.build(elements, std::move(adj),CTBuilder::TreeType::MaxTree);
+      auto tree = builder.build(meta, elements, std::move(adj),CTBuilder::TreeType::MaxTree);
 
       THEN("The built tree should have 5 nodes") {
 	      REQUIRE(tree.numberOfNodes() == 5);
@@ -103,7 +104,7 @@ SCENARIO("Component tree builder should be built correctly.") {
     }
 
     WHEN ("The builder builds a min-tree") {
-      auto tree = builder.build(elements, std::move(adj), CTBuilder::TreeType::MinTree);
+      auto tree = builder.build(meta, elements, std::move(adj), CTBuilder::TreeType::MinTree);
 
       THEN("The built tree should have 6 nodes") {
         REQUIRE(tree.numberOfNodes() == 6);

@@ -1,3 +1,5 @@
+#include <pomar/ComponentTree/CTMeta.hpp>
+
 #include <iostream>
 #include <vector>
 #include <limits>
@@ -106,7 +108,8 @@ namespace pomar
     *   the indices of the elements set ordered (this order define the type of
     *   the tree such as max-tree or min-tree).
     */
-    CTree(const std::vector<int>& parent, const std::vector<int>& sortedIndices, const std::vector<T>& elements);
+    CTree(std::shared_ptr<CTMeta> pmeta, const std::vector<int>& parent, const std::vector<int>& sortedIndices, 
+      const std::vector<T>& elements);
 
     /** Transverse the tree from the leaves to the node calling the visit callback
     *   for each node. This transverse guarantees that all children nodes are
@@ -138,6 +141,9 @@ namespace pomar
     */
     void prune(std::function<bool(const CTNode<T>&)> shouldPrune);
 
+    /** TODO: Write description. */
+    inline std::shared_ptr<CTMeta> meta() { return _meta; }
+
     /** Convert the component tree to the array representation. */
     std::vector<T> convertToVector();
 
@@ -147,17 +153,18 @@ namespace pomar
 
 
     std::vector<bool> removeChildrenAndReturnsPrunnedNodeMap(
-    		std::function<bool(const CTNode<T>&)> shouldPrune);
-	 void _prune(CTNode<T>& node, std::vector<bool>& prunnedNodes);
-	 void _rprune(CTNode<T>& keptNode, CTNode<T>& nodeToPrune, std::vector<bool>& prunnedNodes);
+        std::function<bool(const CTNode<T>&)> shouldPrune);
+    void _prune(CTNode<T>& node, std::vector<bool>& prunnedNodes);
+    void _rprune(CTNode<T>& keptNode, CTNode<T>& nodeToPrune, std::vector<bool>& prunnedNodes);
     void removePrunnedNodes(const std::vector<bool> &prunnedNodes);
     void updateChildrenIdFromPrune(const std::vector<int> &lut);
     std::vector<int> updateParentIdAndCreateLut(const std::vector<bool> &prunnedNodes);
-	 void updateCmap(const std::vector<int> lut);
+    void updateCmap(const std::vector<int> lut);
 	 
   protected:
     std::vector<CTNode<T>> _nodes;
     std::vector<int> _cmap;
+    std::shared_ptr<CTMeta> _meta;
   };
 
   /* ============================[ ALIASES ]====================================================== */
@@ -172,8 +179,8 @@ namespace pomar
 
   /* =========================[ MORPHOLOGICAL TREE - TRANSVERSAL ]================================ */
   template<class T>
-  CTree<T>::CTree(const std::vector<int>& parent, const std::vector<int>& sortedIndices,
-					       const std::vector<T>& elements)
+  CTree<T>::CTree(std::shared_ptr<CTMeta> pmeta, const std::vector<int>& parent, 
+    const std::vector<int>& sortedIndices, const std::vector<T>& elements): _meta{pmeta}
   {
     createNodes(parent, sortedIndices, elements);
   }

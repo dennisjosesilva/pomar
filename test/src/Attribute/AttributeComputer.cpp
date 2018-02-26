@@ -75,7 +75,7 @@ SCENARIO("IncrementalAttributeComputerCollection should compute attributes in or
     std::sort(sortedIndices.begin(), sortedIndices.end(), [&elements](int i1, int i2) { 
       return elements[i1] < elements[i2]; });
 
-    CTree<unsigned char> ct(parent, sortedIndices, elements);
+    CTree<unsigned char> ct(std::make_shared<CTMeta>(), parent, sortedIndices, elements);
     IncrementalAttributeComputerTest<unsigned char> attrTest;
     AreaAttributeComputer<unsigned char> attrArea;
     IncrementalAttributeComputerCollection<unsigned char> attrComputerCollection;

@@ -14,7 +14,7 @@ SCENARIO("Area attribute computer should compute area for all node of a componen
     std::sort(sortedIndices.begin(), sortedIndices.end(), [&elements](int i1, int i2) { 
       return elements[i1] < elements[i2]; });
 
-    CTree<unsigned char> ct(parent, sortedIndices, elements);
+    CTree<unsigned char> ct(std::make_shared<CTMeta>(), parent, sortedIndices, elements);
     AreaAttributeComputer<unsigned char> attrArea;
     WHEN("The area computer computes.") {      
       auto attrs = attrArea.compute(ct);

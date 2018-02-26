@@ -15,6 +15,7 @@ set(SOURCES
   src/AdjacencyRelation/AdjacencyByTranslating.cpp
   src/AdjacencyRelation/Adjacency.cpp
   src/Attribute/AttributeCollection.cpp
+  src/ComponentTree/CTMeta.cpp
   src/Core/PixelIndexer.cpp)
 
 include(SetCompilerWarningAll.cmake)
