@@ -13,7 +13,11 @@ namespace pomar
   class AttributeComputerQuads
   {
   public:
-    AttributeComputerQuads(std::string resource = "./resource/pomar/");
+    enum QTreeType { MaxTree, MinTree };
+    enum QConnectivity { Four, Eight };
+  public:
+    AttributeComputerQuads(QTreeType qTreeType, QConnectivity qConnectivity,
+      const std::string &resource = "./resource/pomar/");
     void setUp(AttributeCollection &attrs, const CTree<T> &ct);
     void preProcess(AttributeCollection &attrs, const CTNode<T> &node);
     void merge(AttributeCollection &attrs, const CTNode<T> &node, const CTNode<T> &parent);
@@ -43,6 +47,7 @@ namespace pomar
     std::vector<std::vector<unsigned char>> _dt;
     std::vector<T> _f;
     std::unique_ptr<PixelIndexer> _pixelIndexer;
+    QTreeType _qTreeType;
   };
 
   /* ------------------------- [ ATTRIBUTE COMPUTER QUADS ] ------------------------------- */
@@ -60,11 +65,25 @@ namespace pomar
   template<class T> const int AttributeComputerQuads<T>::NUM_DT_LEAVES = 6561;
 
   template<class T>
-  AttributeComputerQuads<T>::AttributeComputerQuads(std::string resource)
+  AttributeComputerQuads<T>::AttributeComputerQuads(QTreeType qTreeType, 
+    QConnectivity qConnectivity, const std::string &resource)
   {
     _window.insert(_window.end(),{IPoint2D{-1,-1}, IPoint2D{0,-1}, IPoint2D{1,-1}, 
       IPoint2D{-1,0}, IPoint2D{1,0}, IPoint2D{-1,1}, IPoint2D{0,1}, IPoint2D{1,1}});
-    readDT(resource);
+    
+    _qTreeType = qTreeType;
+    if (_qTreeType == QTreeType::MaxTree) {
+      if (qConnectivity == QConnectivity::Eight)
+        readDT(resource + "/dt-max-tree-8c.dat");
+      else
+        readDT(resource + "/dt-max-tree-4c.dat");
+    }
+    else {
+      if (qConnectivity == QConnectivity::Eight)
+        readDT(resource + "/dt-min-tree-8c.dat");
+      else
+        readDT(resource + "/dt-min-tree-4c.dat");
+    }
   }
 
   template<class T>
@@ -156,7 +175,7 @@ namespace pomar
   bool AttributeComputerQuads<T>::isLower(int ip, int iq) 
   {
     if (isOutOfDomain(iq)) 
-      return true;
+      return _qTreeType == QTreeType::MaxTree;
     return _f[iq] < _f[ip];
   }
 
@@ -164,7 +183,7 @@ namespace pomar
   bool AttributeComputerQuads<T>::isGreater(int ip, int iq)
   {
     if (isOutOfDomain(iq))
-      return false;
+      return _qTreeType == QTreeType::MinTree;
     return _f[iq] > _f[ip];
   }
 
@@ -177,7 +196,7 @@ namespace pomar
   template<class T>
   void AttributeComputerQuads<T>::readDT(const std::string &resource)
   {
-    std::ifstream in{resource + "/dt-max-tree-8c.dat", std::ios::binary};
+    std::ifstream in{resource, std::ios::binary};
     _dt.resize(NUM_DT_LEAVES);
     char buffer[9];
 
