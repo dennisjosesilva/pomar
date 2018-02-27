@@ -173,14 +173,6 @@ namespace pomar
     return CTree<T>(pmeta, parent, sortedIndices, elements);
   }
 
-  /* ========================================[ FIND ROOT ]======================================================================= */
-  int CTBuilder::findRoot(std::vector<int>& zpar, int p) const
-  {
-    if (zpar[p] != p)
-      zpar[p] = findRoot(zpar, zpar[p]);
-    return zpar[p];
-  }
-
   /* ==================================[ CANONIZE TREE ]========================================================================== */
   template<typename T>
   void CTBuilder::canonizeTree(const std::vector<T>& elements, const std::vector<int>& sortedIndices,

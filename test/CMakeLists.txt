@@ -18,6 +18,7 @@ set(SOURCES
   src/Attribute/AttributeCollection.cpp  
   src/Attribute/AttributeComputer.cpp
   src/Attribute/BasicAttributeComputer.cpp  
+  src/Attribute/AttributeComputerQuads.cpp
   src/Math/Point.cpp
   src/Core/PixelIndexer.cpp
   src/Core/Sort.cpp  

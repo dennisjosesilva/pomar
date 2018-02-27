@@ -7,6 +7,7 @@ namespace pomar
   {
   public:
     CTMeta() {}
+    virtual ~CTMeta() {}
   };
 
   class CTMetaImage2D : public virtual CTMeta

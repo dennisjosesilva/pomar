@@ -5,6 +5,7 @@
 #include <limits>
 #include <functional>
 #include <cstddef>
+#include <memory>
 #include <algorithm>
 #include <iostream>
 
@@ -142,10 +143,10 @@ namespace pomar
     void prune(std::function<bool(const CTNode<T>&)> shouldPrune);
 
     /** TODO: Write description. */
-    inline std::shared_ptr<CTMeta> meta() { return _meta; }
+    inline std::shared_ptr<CTMeta> meta() const { return _meta; }
 
     /** Convert the component tree to the array representation. */
-    std::vector<T> convertToVector();
+    std::vector<T> convertToVector() const;
 
   private:
     void createNodes(const std::vector<int>& parent, const std::vector<int>& sortedIndices, const std::vector<T>& elements);
@@ -261,7 +262,7 @@ namespace pomar
 
   /* ==================[ COMPONENT TREE - CONVERT TO VECTOR ]=============================== */
   template<class T>
-  std::vector<T> CTree<T>::convertToVector()
+  std::vector<T> CTree<T>::convertToVector() const
   {
     std::vector<T> v(_cmap.size());
     for (auto& node: _nodes) {
