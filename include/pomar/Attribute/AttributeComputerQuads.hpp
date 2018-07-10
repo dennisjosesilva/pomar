@@ -67,7 +67,8 @@ namespace pomar
   {
   public:
     AttributeComputerQuads(QTreeType qTreeType, QConnectivity qConnectivity,
-      const std::string &resource = "./resource/pomar/");
+      const std::string &resource = "./resource/pomar/",
+      const std::vector<std::shared_ptr<AttributeFromQuadsComputer>>& qattrComputers = {});
     void setUp(AttributeCollection &attrs, const CTree<T> &ct);
     void preProcess(AttributeCollection &attrs, const CTNode<T> &node);
     void merge(AttributeCollection &attrs, const CTNode<T> &node, const CTNode<T> &parent);
@@ -92,11 +93,13 @@ namespace pomar
     void readDT(const std::string &resource);
   private:
     int _p1, _p2, _p3, _pd, _p4;
+    std::vector<std::shared_ptr<AttributeFromQuadsComputer>> _qattrComputers;
     std::vector<IPoint2D> _window;
     std::vector<std::vector<unsigned char>> _dt;
     std::vector<T> _f;
     std::unique_ptr<PixelIndexer> _pixelIndexer;
     QTreeType _qTreeType;
+    QConnectivity _qconn;
   };
 
   /* ------------------------- [ ATTRIBUTE COMPUTER QUADS ] ------------------------------- */
@@ -115,11 +118,14 @@ namespace pomar
 
   template<class T>
   AttributeComputerQuads<T>::AttributeComputerQuads(QTreeType qTreeType, 
-    QConnectivity qConnectivity, const std::string &resource)
+    QConnectivity qConnectivity, const std::string &resource, 
+    const std::vector<std::shared_ptr<AttributeFromQuadsComputer>>& qattrComputers)
   {
     _window.insert(_window.end(),{IPoint2D{-1,-1}, IPoint2D{0,-1}, IPoint2D{1,-1}, 
       IPoint2D{-1,0}, IPoint2D{1,0}, IPoint2D{-1,1}, IPoint2D{0,1}, IPoint2D{1,1}});
     
+    _qattrComputers = qattrComputers;
+    _qconn = qConnectivity;
     _qTreeType = qTreeType;
     if (_qTreeType == QTreeType::MaxTree) {
       if (qConnectivity == QConnectivity::Eight)
@@ -147,6 +153,10 @@ namespace pomar
     _p1 = attrs.attrIndex(AttrType::QUADS_Q1); _p2 = attrs.attrIndex(AttrType::QUADS_Q2);
     _pd = attrs.attrIndex(AttrType::QUADS_QD); _p3 = attrs.attrIndex(AttrType::QUADS_Q3);
     _p4 = attrs.attrIndex(AttrType::QUADS_Q4);
+
+    for (auto q : _qattrComputers) 
+      q->setUp(attrs, _qconn);
+
     std::unique_ptr<PixelIndexer> tpixelIndexer{new PixelIndexerDefaultValue{meta->width(), meta->height()}};
     _pixelIndexer = std::move(tpixelIndexer);
   }
@@ -173,7 +183,10 @@ namespace pomar
 
   template<class T>
   void AttributeComputerQuads<T>::postProcess(AttributeCollection &attrs, const CTNode<T> &node)
-  {}
+  {
+    for (auto q: _qattrComputers)
+      q->compute(node.id(), attrs);
+  }
 
   template<class T>
   AttributeCollection AttributeComputerQuads<T>::compute(const CTree<T> &ct)
