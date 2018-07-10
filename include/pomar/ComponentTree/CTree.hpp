@@ -331,20 +331,21 @@ namespace pomar
   template<class T>
   void CTree<T>::updateChildrenIdFromPrune(const std::vector<int> &lut)
   {
-	 auto& root = _nodes.front();    
+	  auto& root = _nodes.front();    
     auto children = root.children();
     for(size_t c = 0; c < children.size(); c++) { 
 	    root.child(c, lut[children[c]]);
     }
 
     for (size_t i = 1; i < _nodes.size(); i++) {
-        auto& node = _nodes[i];
-        node.id(lut[node.id()]);
-        node.parent(lut[node.parent()]);
-        auto children = node.children();
-		  for(size_t c = 0; c < children.size(); c++) { 
-	        node.child(c, lut[children[c]]);
-        }
+      auto& node = _nodes[i];
+      node.id(lut[node.id()]);
+      node.parent(lut[node.parent()]);
+      auto children = node.children();
+      
+      for(size_t c = 0; c < children.size(); c++) { 
+        node.child(c, lut[children[c]]);
+      }
 		}
   }
 

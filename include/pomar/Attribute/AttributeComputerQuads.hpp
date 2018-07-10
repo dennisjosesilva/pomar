@@ -9,12 +9,62 @@
 
 namespace pomar
 {
+  enum QTreeType { MaxTree, MinTree };
+  enum QConnectivity { Four, Eight };
+
+  /* Atribute From Quads Computer */
+  class AttributeFromQuadsComputer
+  {
+  public:
+    void setUp(AttributeCollection &attrs, QConnectivity con);
+    virtual void compute(size_t nodeId, AttributeCollection &attrs) = 0;
+    virtual AttrType attrType() = 0;
+
+  protected:
+    int _p1, _p2, _pd, _p3, _p4;
+    int _attrIdx; 
+    QConnectivity _con;
+  };
+
+  /* AttributeFromQuadsComputer subclasses.*/
+  class QArea: public AttributeFromQuadsComputer
+  {
+  public:
+    inline AttrType attrType() { return AttrType::QUADS_AREA; }
+    void compute(size_t nodeId, AttributeCollection &attrs);
+  };
+
+  class QCArea: public AttributeFromQuadsComputer
+  {
+  public:
+    inline AttrType attrType() { return AttrType::QUADS_CONTINUOS_AREA; }
+    void compute(size_t nodeId, AttributeCollection &attrs);
+  };
+
+  class QPerimeter: public AttributeFromQuadsComputer
+  {
+  public:
+    inline AttrType attrType() { return AttrType::QUADS_CONTINUOS_PERIMETER; }
+    void compute(size_t nodeId, AttributeCollection &attrs);
+  };
+
+  class QCPerimeter: public AttributeFromQuadsComputer
+  {
+  public:
+    inline AttrType attrType() { return AttrType::QUADS_CONTINUOS_PERIMETER; }
+    void compute(size_t nodeId, AttributeCollection &attrs);
+  };
+
+  class QEulerNumber: public AttributeFromQuadsComputer
+  {
+  public:
+    inline AttrType attrType() { return AttrType::QUADS_EULER_NUMBER; }
+    void compute(size_t nodeId, AttributeCollection &attrs);
+  };
+
   template<class T>
   class AttributeComputerQuads
   {
-  public:
-    enum QTreeType { MaxTree, MinTree };
-    enum QConnectivity { Four, Eight };
   public:
     AttributeComputerQuads(QTreeType qTreeType, QConnectivity qConnectivity,
       const std::string &resource = "./resource/pomar/");
@@ -24,7 +74,6 @@ namespace pomar
     void postProcess(AttributeCollection &attrs, const CTNode<T> &node);
 
     AttributeCollection compute(const CTree<T> &ct);
-
     std::unique_ptr<IncrementalAttributeComputer<T>> toIncrementalAttributeComputer();
   private:
     static const int P1; static const int P2; static const int P3;
@@ -205,6 +254,56 @@ namespace pomar
       _dt[i].insert(_dt[i].end(), buffer, buffer + 9);
     }
   }
-}
 
+  /* --------------------- [ AttibuteFromQuadsComputers ] ---------------------------------- */
+  void AttributeFromQuadsComputer::setUp(AttributeCollection &attrs, QConnectivity con)
+  {
+    _p1 = attrs.attrIndex(AttrType::QUADS_Q1);
+    _p2 = attrs.attrIndex(AttrType::QUADS_Q2);
+    _pd = attrs.attrIndex(AttrType::QUADS_QD); 
+    _p3 = attrs.attrIndex(AttrType::QUADS_Q3); 
+    _p4 = attrs.attrIndex(AttrType::QUADS_Q4);
+    _con = con;
+    _attrIdx = attrs.attrIndex(attrType());
+  }
+
+  /* ------------------- [ AttibuteFromQuadsComputers subclasses ] ------------------------------- */
+  void QArea::compute(size_t nodeId, AttributeCollection &attrs)
+  {
+    auto area = (attrs[_p1][nodeId] + 2.0*attrs[_p2][nodeId] + 2.0*attrs[_pd][nodeId] + 
+      3.0*attrs[_p3][nodeId] + 4.0*attrs[_p4][nodeId]) / 4.0;
+    attrs[_attrIdx][nodeId] = area;
+  }
+
+  void QCArea::compute(size_t nodeId, AttributeCollection &attrs)
+  {
+    auto area = 0.25*((attrs[_p1][nodeId]/2.0) + attrs[_p2][nodeId] + attrs[_pd][nodeId] +
+      + ((7.0/2.0)*attrs[_p3][nodeId]) + (4.0*attrs[_p4][nodeId]));
+    attrs[_attrIdx][nodeId] = area;
+  }
+
+  void QPerimeter::compute(size_t nodeId, AttributeCollection &attrs)
+  {
+    auto perimeter = attrs[_p1][nodeId] + attrs[_p2][nodeId] + (2.0*attrs[_pd][nodeId]) + 
+      attrs[_p3][nodeId];
+    attrs[_attrIdx][nodeId] = perimeter;
+  }
+
+  void QCPerimeter::compute(size_t nodeId, AttributeCollection &attrs)
+  {
+    auto perimeter = attrs[_p2][nodeId] + ((attrs[_p1][nodeId] + attrs[_p3][nodeId]) / 1.41);
+    attrs[_attrIdx][nodeId] = perimeter;
+  }
+
+  void QEulerNumber::compute(size_t nodeId, AttributeCollection &attrs)
+  {
+    auto e = 0.0;
+    if (_con == Four)
+      e = (attrs[_p1][nodeId] - attrs[_p3][nodeId] - (2.0 * attrs[_p2][nodeId])) / 4.0;
+    else
+      e = (attrs[_p1][nodeId] - attrs[_p3][nodeId] + (2.0 * attrs[_p2][nodeId])) / 4.0;
+    
+    attrs[_attrIdx][nodeId] = e;
+  }
+}
 #endif

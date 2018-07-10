@@ -24,8 +24,8 @@ SCENARIO("Quads attribute computer should count bit-quads for all nodes of a max
     auto ct = builder.build(std::make_shared<CTMetaImage2D>(width,height,1), f, std::move(adj), 
       CTBuilder::TreeType::MaxTree);
     AttributeComputerQuads<unsigned char> attrComputer{
-      AttributeComputerQuads<unsigned char>::QTreeType::MaxTree,
-      AttributeComputerQuads<unsigned char>::QConnectivity::Eight,
+      QTreeType::MaxTree,
+      QConnectivity::Eight,
       "../../resource/pomar"};
     
     WHEN("The maxtree computed method is called.") {
@@ -76,8 +76,8 @@ SCENARIO("Quads attribute computer should count bit-quads for all nodes of a min
     auto ct = builder.build(std::make_shared<CTMetaImage2D>(width,height,1), f, std::move(adj), 
       CTBuilder::TreeType::MinTree);
     AttributeComputerQuads<unsigned char> attrComputer{
-      AttributeComputerQuads<unsigned char>::QTreeType::MinTree,
-      AttributeComputerQuads<unsigned char>::QConnectivity::Eight,
+      QTreeType::MinTree,
+      QConnectivity::Eight,
       "../../resource/pomar"};
     
     WHEN("The min-tree computed method is called.") {
