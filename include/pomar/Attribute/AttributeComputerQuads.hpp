@@ -44,7 +44,7 @@ namespace pomar
   class QPerimeter: public AttributeFromQuadsComputer
   {
   public:
-    inline AttrType attrType() { return AttrType::QUADS_CONTINUOS_PERIMETER; }
+    inline AttrType attrType() { return AttrType::QUADS_PERIMETER; }
     void compute(size_t nodeId, AttributeCollection &attrs);
   };
 
@@ -154,8 +154,10 @@ namespace pomar
     _pd = attrs.attrIndex(AttrType::QUADS_QD); _p3 = attrs.attrIndex(AttrType::QUADS_Q3);
     _p4 = attrs.attrIndex(AttrType::QUADS_Q4);
 
-    for (auto q : _qattrComputers) 
+    for (auto q : _qattrComputers) { 
+      attrs.push(q->attrType(), n);
       q->setUp(attrs, _qconn);
+    }
 
     std::unique_ptr<PixelIndexer> tpixelIndexer{new PixelIndexerDefaultValue{meta->width(), meta->height()}};
     _pixelIndexer = std::move(tpixelIndexer);
@@ -283,8 +285,8 @@ namespace pomar
   /* ------------------- [ AttibuteFromQuadsComputers subclasses ] ------------------------------- */
   void QArea::compute(size_t nodeId, AttributeCollection &attrs)
   {
-    auto area = (attrs[_p1][nodeId] + 2.0*attrs[_p2][nodeId] + 2.0*attrs[_pd][nodeId] + 
-      3.0*attrs[_p3][nodeId] + 4.0*attrs[_p4][nodeId]) / 4.0;
+    auto area = (attrs[_p1][nodeId] + (2.0*attrs[_p2][nodeId]) + (2.0*attrs[_pd][nodeId]) + 
+      (3.0*attrs[_p3][nodeId]) + (4.0*attrs[_p4][nodeId])) / 4.0;    
     attrs[_attrIdx][nodeId] = area;
   }
 
@@ -312,9 +314,9 @@ namespace pomar
   {
     auto e = 0.0;
     if (_con == Four)
-      e = (attrs[_p1][nodeId] - attrs[_p3][nodeId] - (2.0 * attrs[_p2][nodeId])) / 4.0;
+      e = (attrs[_p1][nodeId] - attrs[_p3][nodeId] + (2.0 * attrs[_pd][nodeId])) / 4.0;
     else
-      e = (attrs[_p1][nodeId] - attrs[_p3][nodeId] + (2.0 * attrs[_p2][nodeId])) / 4.0;
+      e = (attrs[_p1][nodeId] - attrs[_p3][nodeId] - (2.0 * attrs[_pd][nodeId])) / 4.0;
     
     attrs[_attrIdx][nodeId] = e;
   }

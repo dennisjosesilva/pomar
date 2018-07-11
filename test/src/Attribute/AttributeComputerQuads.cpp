@@ -60,6 +60,7 @@ SCENARIO("Quads attribute computer should count bit-quads for all nodes of a max
     }
   }
 }
+
 SCENARIO("Quads attribute computer should count bit-quads for all nodes of a min-tree with 8-connectivity.") {
   GIVEN("A min-tree 'ct' built from a image 'f'.") {
     std::vector<unsigned char> f = {
@@ -107,6 +108,51 @@ SCENARIO("Quads attribute computer should count bit-quads for all nodes of a min
         auto qd = attr.attrIndex(AttrType::QUADS_QD);
         REQUIRE(attr[qd][4] == 0); REQUIRE(attr[qd][3] == 1); REQUIRE(attr[qd][2] == 0);
         REQUIRE(attr[qd][1] == 0); REQUIRE(attr[qd][0] == 0); 
+      }
+    }
+  }
+}
+
+SCENARIO("AttributeComputerQuads should compute area, perimeter (also continuous approx.) and Euler Number") {
+  GIVEN("A max-tree 'ct' built from a image 'f'.") {
+    std::vector<unsigned char> f = {
+      0,0,0,0,0,0,
+      0,2,1,3,3,3,
+      0,1,2,3,2,3,
+      0,1,1,3,2,3,
+      0,2,1,3,3,3,
+      0,0,0,0,0,0
+    };
+    int width = 6, height = 6;
+    CTBuilder builder;
+    auto adj = AdjacencyByTranslating2D::createAdjacency8(width, height);
+    auto ct = builder.build(std::make_shared<CTMetaImage2D>(width,height,1), f, std::move(adj), 
+      CTBuilder::TreeType::MaxTree);
+
+    std::vector<std::shared_ptr<AttributeFromQuadsComputer>> comps = {std::make_shared<QArea>(), 
+      std::make_shared<QCArea>(), std::make_shared<QPerimeter>(), std::make_shared<QCPerimeter>(), 
+      std::make_shared<QEulerNumber>() };
+
+    AttributeComputerQuads<unsigned char> attrComputer{ QTreeType::MaxTree, QConnectivity::Eight,
+      "../../resource/pomar", comps };
+    
+    WHEN("call the compute method from the AttributeComputerQuads") {
+      auto attrs = attrComputer.compute(ct);
+
+      THEN("The area should be computed right") {
+        auto attrIdx = attrs.attrIndex(AttrType::QUADS_AREA);
+        REQUIRE(attrs[attrIdx][0] == 36); REQUIRE(attrs[attrIdx][1] == 20); REQUIRE(attrs[attrIdx][2] == 14);
+        REQUIRE(attrs[attrIdx][3] == 1); REQUIRE(attrs[attrIdx][4] == 10);
+      }
+      THEN("The perimeter should be computed right") {
+        auto attrIdx = attrs.attrIndex(AttrType::QUADS_PERIMETER);
+        REQUIRE(attrs[attrIdx][0] == 24); REQUIRE(attrs[attrIdx][1] == 18); REQUIRE(attrs[attrIdx][2] == 20);
+        REQUIRE(attrs[attrIdx][3] == 4); REQUIRE(attrs[attrIdx][4] == 20);
+      }
+      THEN("The Euler number should be computed right") {
+        auto attrIdx = attrs.attrIndex(AttrType::QUADS_EULER_NUMBER);
+        REQUIRE(attrs[attrIdx][0] == 1.0); REQUIRE(attrs[attrIdx][1] == 1.0); REQUIRE(attrs[attrIdx][2] == 1.0);
+        REQUIRE(attrs[attrIdx][3] == 1.0); REQUIRE(attrs[attrIdx][4] == 0.0);
       }
     }
   }
