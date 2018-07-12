@@ -113,7 +113,7 @@ SCENARIO("Quads attribute computer should count bit-quads for all nodes of a min
   }
 }
 
-SCENARIO("AttributeComputerQuads should compute area, perimeter (also continuous approx.) and Euler Number") {
+SCENARIO("AttributeComputerQuads should compute area, perimeter (also continuous approx.) and Euler Number (max-tree)") {
   GIVEN("A max-tree 'ct' built from a image 'f'.") {
     std::vector<unsigned char> f = {
       0,0,0,0,0,0,
@@ -153,6 +153,73 @@ SCENARIO("AttributeComputerQuads should compute area, perimeter (also continuous
         auto attrIdx = attrs.attrIndex(AttrType::QUADS_EULER_NUMBER);
         REQUIRE(attrs[attrIdx][0] == 1.0); REQUIRE(attrs[attrIdx][1] == 1.0); REQUIRE(attrs[attrIdx][2] == 1.0);
         REQUIRE(attrs[attrIdx][3] == 1.0); REQUIRE(attrs[attrIdx][4] == 0.0);
+      }
+      THEN("The continuos area should be computed right") {
+        auto attrIdx = attrs.attrIndex(AttrType::QUADS_CONTINUOS_AREA);
+        REQUIRE(attrs[attrIdx][0] == 30.5); REQUIRE(attrs[attrIdx][1] == 16.0); REQUIRE(attrs[attrIdx][2] == 11.0);
+        REQUIRE(attrs[attrIdx][3] == 0.5); REQUIRE(attrs[attrIdx][4] == 7.0);
+      }      
+      THEN("The continuos perimeter should be computed right") {
+        auto attrIdx = attrs.attrIndex(AttrType::QUADS_CONTINUOS_PERIMETER);
+        REQUIRE(attrs[attrIdx][0] == Approx(22.8368794326)); REQUIRE(attrs[attrIdx][1] == Approx(16.8368794326)); 
+        REQUIRE(attrs[attrIdx][2] == Approx(15.0921985815)); REQUIRE(attrs[attrIdx][3] == Approx(2.83687943262)); 
+        REQUIRE(attrs[attrIdx][4] == Approx(17.6737588652));
+      }
+    }
+  }
+}
+
+SCENARIO("AttributeComputerQuads should compute area, perimeter (also continuous approx.) and Euler Number for (min-tree)") {
+  GIVEN("A min-tree 'ct' built from a image 'f'.") {
+    std::vector<unsigned char> f = {
+      0,0,0,0,0,0,
+      0,2,1,3,3,3,
+      0,1,2,3,2,3,
+      0,1,1,3,2,3,
+      0,2,1,3,3,3,
+      0,0,0,0,0,0
+    };
+    int width = 6, height = 6;
+    CTBuilder builder;
+    auto adj = AdjacencyByTranslating2D::createAdjacency8(width, height);
+    auto ct = builder.build(std::make_shared<CTMetaImage2D>(width,height,1), f, std::move(adj), 
+      CTBuilder::TreeType::MinTree);
+
+    std::vector<std::shared_ptr<AttributeFromQuadsComputer>> comps = {std::make_shared<QArea>(), 
+      std::make_shared<QCArea>(), std::make_shared<QPerimeter>(), std::make_shared<QCPerimeter>(), 
+      std::make_shared<QEulerNumber>() };
+
+    AttributeComputerQuads<unsigned char> attrComputer{ QTreeType::MinTree, QConnectivity::Eight,
+      "../../resource/pomar", comps };
+
+    WHEN("call the compute method from the AttributeComputerQuads") {
+      auto attrs = attrComputer.compute(ct);
+
+      THEN("The area should be computed right") {
+        auto attrIdx = attrs.attrIndex(AttrType::QUADS_AREA);
+        REQUIRE(attrs[attrIdx][0] == 36); REQUIRE(attrs[attrIdx][1] == 24); REQUIRE(attrs[attrIdx][2] == 2);
+        REQUIRE(attrs[attrIdx][3] == 21); REQUIRE(attrs[attrIdx][4] == 16);
+      }
+      THEN("The perimeter should be computed right") {
+        auto attrIdx = attrs.attrIndex(AttrType::QUADS_PERIMETER);
+        REQUIRE(attrs[attrIdx][0] == 24); REQUIRE(attrs[attrIdx][1] == 30); REQUIRE(attrs[attrIdx][2] == 6);
+        REQUIRE(attrs[attrIdx][3] == 40); REQUIRE(attrs[attrIdx][4] == 34);
+      }
+      THEN("The euler number should be computed right") {
+        auto attrIdx = attrs.attrIndex(AttrType::QUADS_EULER_NUMBER);
+        REQUIRE(attrs[attrIdx][0] == 1.0); REQUIRE(attrs[attrIdx][1] == 1.0); REQUIRE(attrs[attrIdx][2] == 1.0);
+        REQUIRE(attrs[attrIdx][3] == -1.0); REQUIRE(attrs[attrIdx][4] == 1.0);
+      }
+      THEN("The continouos area should be computed right") {
+        auto attrIdx = attrs.attrIndex(AttrType::QUADS_CONTINUOS_AREA);
+        REQUIRE(attrs[attrIdx][0] == 30.5); REQUIRE(attrs[attrIdx][1] == 18.0);
+        REQUIRE(attrs[attrIdx][2] == 1.0); REQUIRE(attrs[attrIdx][3] == 16.0); REQUIRE(attrs[attrIdx][4] == 9.0);
+      }
+      THEN("The continouos perimeter should be computed right") {
+        auto attrIdx = attrs.attrIndex(AttrType::QUADS_CONTINUOS_PERIMETER);
+        REQUIRE(attrs[attrIdx][0] == Approx(22.83687943262));
+        REQUIRE(attrs[attrIdx][1] == Approx(27.67375886524)); REQUIRE(attrs[attrIdx][2] == Approx(4.83687943262)); 
+        REQUIRE(attrs[attrIdx][3] == Approx(32.76595744680)); REQUIRE(attrs[attrIdx][4] == Approx(31.67375886524));
       }
     }
   }
