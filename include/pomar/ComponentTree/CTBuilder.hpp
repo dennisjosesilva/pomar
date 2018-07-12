@@ -1,6 +1,7 @@
 #include <pomar/AdjacencyRelation/Adjacency.hpp>
 #include <pomar/ComponentTree/CTree.hpp>
 #include <pomar/ComponentTree/CTSorter.hpp>
+#include <pomar/ComponentTree/CTMeta.hpp>
 #include <type_traits>
 #include <vector>
 #include <memory>
@@ -37,8 +38,8 @@ namespace pomar
     *   relation adj.
     */
     template<typename T>
-    CTree<T> build(const std::vector<T> &elements, std::unique_ptr<Adjacency> adj,
-			        TreeType treeType);
+    CTree<T> build(std::shared_ptr<CTMeta> pmeta, const std::vector<T> &elements, 
+      std::unique_ptr<Adjacency> adj, TreeType treeType);
 
     /**
     *   Build a component tree of the type treeType and the graph with the
@@ -46,8 +47,8 @@ namespace pomar
     *   relation adj.
     */
     template<typename T>
-    CTree<T> build(const std::vector<T> &elements, std::shared_ptr<Adjacency> adj,
-			       TreeType treeType);
+    CTree<T> build(std::shared_ptr<CTMeta> pmeta, const std::vector<T> &elements, 
+      std::shared_ptr<Adjacency> adj, TreeType treeType);
 
     /**
     *   Build a component tree of the graph with the
@@ -55,8 +56,8 @@ namespace pomar
     *   relation adj using a sort strategy.
     */
     template<typename T>
-    CTree<T> build(const std::vector<T> &elements, std::unique_ptr<Adjacency> adj,
-			        std::function<std::vector<int>(const std::vector<T> &)> sort);
+    CTree<T> build(std::shared_ptr<CTMeta> pmeta, const std::vector<T> &elements, 
+      std::unique_ptr<Adjacency> adj, std::function<std::vector<int>(const std::vector<T> &)> sort);
 
     /**
     *   Build a component tree of the graph with the
@@ -64,8 +65,8 @@ namespace pomar
     *   relation adj using a sort strategy.
     */
     template<typename T>
-    CTree<T> build(const std::vector<T> &elements, std::shared_ptr<Adjacency> adj,
-			        std::function<std::vector<int>(const std::vector<T> &)> sort);
+    CTree<T> build(std::shared_ptr<CTMeta> pmeta, const std::vector<T> &elements, 
+      std::shared_ptr<Adjacency> adj, std::function<std::vector<int>(const std::vector<T> &)> sort);
 
   protected:
     /** 
@@ -73,12 +74,12 @@ namespace pomar
      * sorting. 
     */
     template<typename T>
-    CTree<T> build(const std::vector<T> &elements, Adjacency *adj,
+    CTree<T> build(std::shared_ptr<CTMeta> pmeta, const std::vector<T> &elements, Adjacency *adj,
 			       std::function<std::vector<int>(const std::vector<T> &)> sort);
 
     /** Build overload which receives an adjacency relation pointer and a TreeType. */
     template<typename T>
-    CTree<T> build(const std::vector<T> &elements, Adjacency *adj,
+    CTree<T> build(std::shared_ptr<CTMeta> pmeta, const std::vector<T> &elements, Adjacency *adj,
 			       TreeType treeType);
 
     /** Algorithm find from Union-find data structure with path compression. */
@@ -96,18 +97,18 @@ namespace pomar
 
   /* ==============================[ BUILD FROM TREE TYPE ]============================================================== */
   template<typename T>
-  CTree<T> CTBuilder::build(const std::vector<T> &elements, Adjacency *adj,
+  CTree<T> CTBuilder::build(std::shared_ptr<CTMeta> pmeta, const std::vector<T> &elements, Adjacency *adj,
 			        TreeType treeType)
   {
     switch(treeType) {
       case CTBuilder::TreeType::MaxTree:
       {      	
-      	return build(elements, adj, 
+      	return build(pmeta, elements, adj, 
           static_cast<std::function<std::vector<int>(const std::vector<T>&)>>(&maxTreeSort<T>));
       }
       case CTBuilder::TreeType::MinTree:
       {      	
-      	return build(elements, adj, 
+      	return build(pmeta, elements, adj, 
           static_cast<std::function<std::vector<int>(const std::vector<T>&)>>(&minTreeSort<T>));
       }
     }
@@ -115,37 +116,37 @@ namespace pomar
   }
 
   template<typename T>
-  CTree<T> CTBuilder::build(const std::vector<T> &elements, std::unique_ptr<Adjacency> adj,
-			        TreeType treeType)
+  CTree<T> CTBuilder::build(std::shared_ptr<CTMeta> pmeta, const std::vector<T> &elements, 
+    std::unique_ptr<Adjacency> adj, TreeType treeType)
   {
-    return build(elements, adj.get(), treeType);
+    return build(pmeta, elements, adj.get(), treeType);
   }
 
   template<typename T>
-  CTree<T> CTBuilder::build(const std::vector<T> &elements, std::shared_ptr<Adjacency> adj,
-			       TreeType treeType)
+  CTree<T> CTBuilder::build(std::shared_ptr<CTMeta> pmeta, const std::vector<T> &elements,
+    std::shared_ptr<Adjacency> adj, TreeType treeType)
   {
-    return build(elements, adj.get(), treeType);
+    return build(pmeta, elements, adj.get(), treeType);
   }
 
   /* =======================================[ BUILD FROM SORTER OVERLOADS ]=============================================== */
   template<typename T>
-  CTree<T> CTBuilder::build(const std::vector<T> &elements, std::unique_ptr<Adjacency> adj,
-			        std::function<std::vector<int>(const std::vector<T> &)> sort)
+  CTree<T> CTBuilder::build(std::shared_ptr<CTMeta> pmeta, const std::vector<T> &elements, 
+    std::unique_ptr<Adjacency> adj, std::function<std::vector<int>(const std::vector<T> &)> sort)
   {
-    return build(elements, adj.get(), sort);
+    return build(pmeta, elements, adj.get(), sort);
   }
 
   template<typename T>
-  CTree<T> CTBuilder::build(const std::vector<T> &elements, std::shared_ptr<Adjacency> adj,
-			        std::function<std::vector<int>(const std::vector<T> &)> sort)
+  CTree<T> CTBuilder::build(std::shared_ptr<CTMeta> pmeta, const std::vector<T> &elements,
+    std::shared_ptr<Adjacency> adj, std::function<std::vector<int>(const std::vector<T> &)> sort)
   {
-    return build(elements, adj.get(), sort);
+    return build(pmeta, elements, adj.get(), sort);
   }
 
   /* ========================================[ BUILDING ALGORITHM ]====================================================== */
   template<typename T>
-  CTree<T> CTBuilder::build(const std::vector<T> &elements, Adjacency *adj,
+  CTree<T> CTBuilder::build(std::shared_ptr<CTMeta> pmeta, const std::vector<T> &elements, Adjacency *adj,
 						        std::function<std::vector<int>(const std::vector<T> &)> sort)
   {
     const int UNDEF = -1;
@@ -169,15 +170,7 @@ namespace pomar
 
     canonizeTree(elements, sortedIndices, parent);
 
-    return CTree<T>(parent, sortedIndices, elements);
-  }
-
-  /* ========================================[ FIND ROOT ]======================================================================= */
-  int CTBuilder::findRoot(std::vector<int>& zpar, int p) const
-  {
-    if (zpar[p] != p)
-      zpar[p] = findRoot(zpar, zpar[p]);
-    return zpar[p];
+    return CTree<T>(pmeta, parent, sortedIndices, elements);
   }
 
   /* ==================================[ CANONIZE TREE ]========================================================================== */

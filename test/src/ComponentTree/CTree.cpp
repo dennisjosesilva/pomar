@@ -1,5 +1,6 @@
 #include "../../catch.hpp"
 #include <pomar/ComponentTree/CTree.hpp>
+#include <pomar/ComponentTree/CTMeta.hpp>
 #include <numeric>
 #include <algorithm>
 
@@ -25,9 +26,10 @@ SCENARIO("Morphological Tree initialize correctly") {
     std::vector<int> sortedIndices(elements.size());
     std::iota(sortedIndices.begin(), sortedIndices.end(), 0);
     std::sort(sortedIndices.begin(), sortedIndices.end(), [&elements](int i1, int i2) { return elements[i1] < elements[i2]; });
+    auto meta = std::make_shared<CTMeta>();
 
     WHEN("A Component tree (max-tree) is initialized") {
-      CTree<unsigned char> tree(parent, sortedIndices, elements);
+      CTree<unsigned char> tree(meta, parent, sortedIndices, elements);
 
       THEN("it should contains 5 nodes") {
 	       REQUIRE(tree.numberOfNodes() == 5);
@@ -88,8 +90,9 @@ SCENARIO("The Component class Should run the algorithms correctly") {
     std::sort(sortedIndices.begin(), sortedIndices.end(), [&elements](int i1, int i2) {
       return elements[i1] < elements[i2];
     });
+    auto meta = std::make_shared<CTMeta>();
 
-    CTree<unsigned char> tree(parent, sortedIndices, elements);
+    CTree<unsigned char> tree(meta, parent, sortedIndices, elements);
 
     WHEN("it is asked to prune the nodes with level greater or equal than 3") {
       tree.prune([](const CTNode<unsigned char>& node) {

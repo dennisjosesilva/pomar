@@ -1,8 +1,11 @@
+#include <pomar/ComponentTree/CTMeta.hpp>
+
 #include <iostream>
 #include <vector>
 #include <limits>
 #include <functional>
 #include <cstddef>
+#include <memory>
 #include <algorithm>
 #include <iostream>
 
@@ -106,7 +109,8 @@ namespace pomar
     *   the indices of the elements set ordered (this order define the type of
     *   the tree such as max-tree or min-tree).
     */
-    CTree(const std::vector<int>& parent, const std::vector<int>& sortedIndices, const std::vector<T>& elements);
+    CTree(std::shared_ptr<CTMeta> pmeta, const std::vector<int>& parent, const std::vector<int>& sortedIndices, 
+      const std::vector<T>& elements);
 
     /** Transverse the tree from the leaves to the node calling the visit callback
     *   for each node. This transverse guarantees that all children nodes are
@@ -138,8 +142,11 @@ namespace pomar
     */
     void prune(std::function<bool(const CTNode<T>&)> shouldPrune);
 
+    /** TODO: Write description. */
+    inline std::shared_ptr<CTMeta> meta() const { return _meta; }
+
     /** Convert the component tree to the array representation. */
-    std::vector<T> convertToVector();
+    std::vector<T> convertToVector() const;
 
   private:
     void createNodes(const std::vector<int>& parent, const std::vector<int>& sortedIndices, const std::vector<T>& elements);
@@ -147,17 +154,18 @@ namespace pomar
 
 
     std::vector<bool> removeChildrenAndReturnsPrunnedNodeMap(
-    		std::function<bool(const CTNode<T>&)> shouldPrune);
-	 void _prune(CTNode<T>& node, std::vector<bool>& prunnedNodes);
-	 void _rprune(CTNode<T>& keptNode, CTNode<T>& nodeToPrune, std::vector<bool>& prunnedNodes);
+        std::function<bool(const CTNode<T>&)> shouldPrune);
+    void _prune(CTNode<T>& node, std::vector<bool>& prunnedNodes);
+    void _rprune(CTNode<T>& keptNode, CTNode<T>& nodeToPrune, std::vector<bool>& prunnedNodes);
     void removePrunnedNodes(const std::vector<bool> &prunnedNodes);
     void updateChildrenIdFromPrune(const std::vector<int> &lut);
     std::vector<int> updateParentIdAndCreateLut(const std::vector<bool> &prunnedNodes);
-	 void updateCmap(const std::vector<int> lut);
+    void updateCmap(const std::vector<int> lut);
 	 
   protected:
     std::vector<CTNode<T>> _nodes;
     std::vector<int> _cmap;
+    std::shared_ptr<CTMeta> _meta;
   };
 
   /* ============================[ ALIASES ]====================================================== */
@@ -172,8 +180,8 @@ namespace pomar
 
   /* =========================[ MORPHOLOGICAL TREE - TRANSVERSAL ]================================ */
   template<class T>
-  CTree<T>::CTree(const std::vector<int>& parent, const std::vector<int>& sortedIndices,
-					       const std::vector<T>& elements)
+  CTree<T>::CTree(std::shared_ptr<CTMeta> pmeta, const std::vector<int>& parent, 
+    const std::vector<int>& sortedIndices, const std::vector<T>& elements): _meta{pmeta}
   {
     createNodes(parent, sortedIndices, elements);
   }
@@ -254,7 +262,7 @@ namespace pomar
 
   /* ==================[ COMPONENT TREE - CONVERT TO VECTOR ]=============================== */
   template<class T>
-  std::vector<T> CTree<T>::convertToVector()
+  std::vector<T> CTree<T>::convertToVector() const
   {
     std::vector<T> v(_cmap.size());
     for (auto& node: _nodes) {
@@ -323,20 +331,21 @@ namespace pomar
   template<class T>
   void CTree<T>::updateChildrenIdFromPrune(const std::vector<int> &lut)
   {
-	 auto& root = _nodes.front();    
+	  auto& root = _nodes.front();    
     auto children = root.children();
     for(size_t c = 0; c < children.size(); c++) { 
 	    root.child(c, lut[children[c]]);
     }
 
     for (size_t i = 1; i < _nodes.size(); i++) {
-        auto& node = _nodes[i];
-        node.id(lut[node.id()]);
-        node.parent(lut[node.parent()]);
-        auto children = node.children();
-		  for(size_t c = 0; c < children.size(); c++) { 
-	        node.child(c, lut[children[c]]);
-        }
+      auto& node = _nodes[i];
+      node.id(lut[node.id()]);
+      node.parent(lut[node.parent()]);
+      auto children = node.children();
+      
+      for(size_t c = 0; c < children.size(); c++) { 
+        node.child(c, lut[children[c]]);
+      }
 		}
   }
 
