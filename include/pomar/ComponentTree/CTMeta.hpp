@@ -1,9 +1,10 @@
 #ifndef CT_META_HPP_INCLUDED
 #define CT_META_HPP_INCLUDED
 
+/** @file */
+
 namespace pomar
 {
-
   /** Class to represent component tree Meta Information. */
   class CTMeta 
   {
