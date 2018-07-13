@@ -45,13 +45,13 @@ namespace pomar
     void compute(size_t nodeId, AttributeCollection &attrs);
   };
 
-  /** Class which computes continuos area approximation from Quads counting. */
+  /** Class which computes continuous area approximation from Quads counting. */
   class QCArea: public AttributeFromQuadsComputer
   {
   public:
-    /** Return QUADS_CONTINUOS_AREA attribute type.  */
-    inline AttrType attrType() { return AttrType::QUADS_CONTINUOS_AREA; }
-    /** Compute continuos area approximation from Quads counting. */
+    /** Return QUADS_CONTINUOUS_AREA attribute type.  */
+    inline AttrType attrType() { return AttrType::QUADS_CONTINUOUS_AREA; }
+    /** Compute continuous area approximation from Quads counting. */
     void compute(size_t nodeId, AttributeCollection &attrs);
   };
 
@@ -65,13 +65,13 @@ namespace pomar
     void compute(size_t nodeId, AttributeCollection &attrs);
   };
 
-  /** Class which computes continuos perimeter from Quads counting. */ 
+  /** Class which computes continuous perimeter from Quads counting. */ 
   class QCPerimeter: public AttributeFromQuadsComputer
   {
   public:
-    /** Return QUADS_CONTINUOS attribute type.  */
-    inline AttrType attrType() { return AttrType::QUADS_CONTINUOS_PERIMETER; }
-    /** Compute continuos perimeter from Quads counting. */
+    /** Return QUADS_CONTINUOUS attribute type.  */
+    inline AttrType attrType() { return AttrType::QUADS_CONTINUOUS_PERIMETER; }
+    /** Compute continuous perimeter from Quads counting. */
     void compute(size_t nodeId, AttributeCollection &attrs);
   };
 

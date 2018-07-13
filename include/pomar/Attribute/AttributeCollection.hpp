@@ -15,7 +15,7 @@ namespace pomar
     AREA, PERIMETER,
     QUADS_Q1, QUADS_Q2, QUADS_Q3, QUADS_QD, QUADS_Q4, QUADS_Q1DASH,
     QUADS_AREA, QUADS_PERIMETER, QUADS_EULER_NUMBER,
-    QUADS_CONTINUOS_AREA, QUADS_CONTINUOS_PERIMETER,
+    QUADS_CONTINUOUS_AREA, QUADS_CONTINUOUS_PERIMETER,
   };
 
   /** Class which represent a collection of attributes computed for a component tree. The attributes

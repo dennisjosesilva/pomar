@@ -154,13 +154,13 @@ SCENARIO("AttributeComputerQuads should compute area, perimeter (also continuous
         REQUIRE(attrs[attrIdx][0] == 1.0); REQUIRE(attrs[attrIdx][1] == 1.0); REQUIRE(attrs[attrIdx][2] == 1.0);
         REQUIRE(attrs[attrIdx][3] == 1.0); REQUIRE(attrs[attrIdx][4] == 0.0);
       }
-      THEN("The continuos area should be computed right") {
-        auto attrIdx = attrs.attrIndex(AttrType::QUADS_CONTINUOS_AREA);
+      THEN("The continuous area should be computed right") {
+        auto attrIdx = attrs.attrIndex(AttrType::QUADS_CONTINUOUS_AREA);
         REQUIRE(attrs[attrIdx][0] == 30.5); REQUIRE(attrs[attrIdx][1] == 16.0); REQUIRE(attrs[attrIdx][2] == 11.0);
         REQUIRE(attrs[attrIdx][3] == 0.5); REQUIRE(attrs[attrIdx][4] == 7.0);
       }      
-      THEN("The continuos perimeter should be computed right") {
-        auto attrIdx = attrs.attrIndex(AttrType::QUADS_CONTINUOS_PERIMETER);
+      THEN("The continuous perimeter should be computed right") {
+        auto attrIdx = attrs.attrIndex(AttrType::QUADS_CONTINUOUS_PERIMETER);
         REQUIRE(attrs[attrIdx][0] == Approx(22.8368794326)); REQUIRE(attrs[attrIdx][1] == Approx(16.8368794326)); 
         REQUIRE(attrs[attrIdx][2] == Approx(15.0921985815)); REQUIRE(attrs[attrIdx][3] == Approx(2.83687943262)); 
         REQUIRE(attrs[attrIdx][4] == Approx(17.6737588652));
@@ -210,13 +210,13 @@ SCENARIO("AttributeComputerQuads should compute area, perimeter (also continuous
         REQUIRE(attrs[attrIdx][0] == 1.0); REQUIRE(attrs[attrIdx][1] == 1.0); REQUIRE(attrs[attrIdx][2] == 1.0);
         REQUIRE(attrs[attrIdx][3] == -1.0); REQUIRE(attrs[attrIdx][4] == 1.0);
       }
-      THEN("The continouos area should be computed right") {
-        auto attrIdx = attrs.attrIndex(AttrType::QUADS_CONTINUOS_AREA);
+      THEN("The continuous area should be computed right") {
+        auto attrIdx = attrs.attrIndex(AttrType::QUADS_CONTINUOUS_AREA);
         REQUIRE(attrs[attrIdx][0] == 30.5); REQUIRE(attrs[attrIdx][1] == 18.0);
         REQUIRE(attrs[attrIdx][2] == 1.0); REQUIRE(attrs[attrIdx][3] == 16.0); REQUIRE(attrs[attrIdx][4] == 9.0);
       }
-      THEN("The continouos perimeter should be computed right") {
-        auto attrIdx = attrs.attrIndex(AttrType::QUADS_CONTINUOS_PERIMETER);
+      THEN("The continuous perimeter should be computed right") {
+        auto attrIdx = attrs.attrIndex(AttrType::QUADS_CONTINUOUS_PERIMETER);
         REQUIRE(attrs[attrIdx][0] == Approx(22.83687943262));
         REQUIRE(attrs[attrIdx][1] == Approx(27.67375886524)); REQUIRE(attrs[attrIdx][2] == Approx(4.83687943262)); 
         REQUIRE(attrs[attrIdx][3] == Approx(32.76595744680)); REQUIRE(attrs[attrIdx][4] == Approx(31.67375886524));
