@@ -7,17 +7,26 @@
 #ifndef ATTRIBUTE_COMPUTER_QUADS_HPP_INCLUDED
 #define ATTRIBUTE_COMPUTER_QUADS_HPP_INCLUDED
 
+/** @file */
+
 namespace pomar
 {
-  enum QTreeType { MaxTree, MinTree };
+  /** Component tree type for quads counting algorithm. */
+  enum QTreeType { MaxTree, MinTree }; 
+  /** Component tree connectivity for quads counting algorithm. */
   enum QConnectivity { Four, Eight };
 
-  /* Atribute From Quads Computer */
+  /** Base class which provides the interface to support 
+   *  attribute computation from the quads countings.
+   */
   class AttributeFromQuadsComputer
   {
   public:
+    /** Method which setups attributres indices and Quads connectivity. */
     void setUp(AttributeCollection &attrs, QConnectivity con);
+    /** Interface for compute attribute of the node with nodeId identification. */
     virtual void compute(size_t nodeId, AttributeCollection &attrs) = 0;
+    /** Interface to indicates the attribute type which the class computes. */
     virtual AttrType attrType() = 0;
 
   protected:
@@ -26,55 +35,96 @@ namespace pomar
     QConnectivity _con;
   };
 
-  /* AttributeFromQuadsComputer subclasses.*/
+  /** Class which computes discrete area from Quads counting. */
   class QArea: public AttributeFromQuadsComputer
   {
   public:
+    /** Return QUADS_AREA attribute type. */
     inline AttrType attrType() { return AttrType::QUADS_AREA; }
+    /** Compute discrete area from Quads counting.  */ 
     void compute(size_t nodeId, AttributeCollection &attrs);
   };
 
+  /** Class which computes continuos area approximation from Quads counting. */
   class QCArea: public AttributeFromQuadsComputer
   {
   public:
+    /** Return QUADS_CONTINUOS_AREA attribute type.  */
     inline AttrType attrType() { return AttrType::QUADS_CONTINUOS_AREA; }
+    /** Compute continuos area approximation from Quads counting. */
     void compute(size_t nodeId, AttributeCollection &attrs);
   };
 
+  /** Class which computes discrete perimeter from Quads counting. */
   class QPerimeter: public AttributeFromQuadsComputer
   {
   public:
+    /** Return QUADS_PERIMETER attribute type. */
     inline AttrType attrType() { return AttrType::QUADS_PERIMETER; }
+    /** Compute discrete perimeter from Quads counting. */
     void compute(size_t nodeId, AttributeCollection &attrs);
   };
 
+  /** Class which computes continuos perimeter from Quads counting. */ 
   class QCPerimeter: public AttributeFromQuadsComputer
   {
   public:
+    /** Return QUADS_CONTINUOS attribute type.  */
     inline AttrType attrType() { return AttrType::QUADS_CONTINUOS_PERIMETER; }
+    /** Compute continuos perimeter from Quads counting. */
     void compute(size_t nodeId, AttributeCollection &attrs);
   };
 
+  /** Class which computes Euler Number from Quads counting. */
   class QEulerNumber: public AttributeFromQuadsComputer
   {
   public:
+    /** Returns QUADS_EULER_NUMBER attribute type. */
     inline AttrType attrType() { return AttrType::QUADS_EULER_NUMBER; }
+    /** Compute Euler Number from Quads counting. */
     void compute(size_t nodeId, AttributeCollection &attrs);
   };
 
+
+  /** 
+   * Class which computer Quads counting using incremental algorithm.
+   * Based on the paper: 
+   * "Efficient incremental computation of attributes based 
+   * on locally countable patterns in component trees"
+   * 
+   * Dennis J. Silva; Wonder A. L. Alves; Alexandre Morimitsu; Ronaldo F. Hashimoto
+   * 2016 IEEE International Conference on Image Processing (ICIP)
+  */
   template<class T>
   class AttributeComputerQuads
   {
   public:
+    /** 
+     * Contructor which receives a tree type, connectivity, the resource path 
+     * (path to the directory which contains file dt-tree-type-connectivity.dat,
+     * default= "./resource/pomar/"), Quads counting attribute computer.
+     * 
+    */
     AttributeComputerQuads(QTreeType qTreeType, QConnectivity qConnectivity,
       const std::string &resource = "./resource/pomar/",
       const std::vector<std::shared_ptr<AttributeFromQuadsComputer>>& qattrComputers = {});
+
+    /** initialise necessary object attributes. */
     void setUp(AttributeCollection &attrs, const CTree<T> &ct);
+
+    /** PreProcess procedure of the quads counting algorithm . */
     void preProcess(AttributeCollection &attrs, const CTNode<T> &node);
+    
+    /** merge procedure of the quads counting algorithm . */
     void merge(AttributeCollection &attrs, const CTNode<T> &node, const CTNode<T> &parent);
+    
+    /** postProcess procedure of the quads counting algorithm . */
     void postProcess(AttributeCollection &attrs, const CTNode<T> &node);
 
+    /** compute quads counting. */ 
     AttributeCollection compute(const CTree<T> &ct);
+
+    /** Convert this object into an IncrementalAttribute Computer instance. */
     std::unique_ptr<IncrementalAttributeComputer<T>> toIncrementalAttributeComputer();
   private:
     static const int P1; static const int P2; static const int P3;
