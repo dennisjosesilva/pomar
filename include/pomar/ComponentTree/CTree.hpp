@@ -246,7 +246,7 @@ namespace pomar
   {
     std::vector<int> rec;
     this->_reconstructNode(id, rec);
-    return std::move(rec);
+    return rec;
   }
 
   template<class T>
@@ -356,7 +356,6 @@ namespace pomar
     std::vector<int> lut(prunnedNodes.size());
     int count = 0;
     for (size_t i = 1; i < _nodes.size(); i++) {
-      auto& node = _nodes[i];
       if (prunnedNodes[i]) {
         count++;
         lut[i] = -1;

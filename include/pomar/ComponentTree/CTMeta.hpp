@@ -25,6 +25,8 @@ namespace pomar
     inline int width() const { return _width; } /**< Input image width. */
     inline int height() const { return _height; } /**< Input image height. */
     inline int nchannel() const { return _nchannel; } /**< Input image number of channels. */
+
+    ~CTMetaImage2D();
   private:
     int _width;
     int _height;
