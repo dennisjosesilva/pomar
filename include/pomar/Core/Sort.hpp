@@ -3,6 +3,7 @@
 #include <numeric>
 #include <limits>
 #include <type_traits>
+#include <functional>
 
 #ifndef SORT_HPP_INCLUDED
 #define SORT_HPP_INCLUDED
