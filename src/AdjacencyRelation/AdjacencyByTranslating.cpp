@@ -47,4 +47,8 @@ namespace pomar
     std::vector<IPoint2D> t{{-1,-1}, {0,-1}, {1,-1}, {1,0}, {1,1}, {0,1}, {-1,1}, {-1,0}};
     return std::unique_ptr<AdjacencyByTranslating2D>(new AdjacencyByTranslating2D(width, height, t));
   }
+
+  AdjacencyByTranslating2D::~AdjacencyByTranslating2D()
+  {}
+  
 }

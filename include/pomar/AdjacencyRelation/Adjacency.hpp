@@ -28,6 +28,12 @@ namespace pomar
     * with value NoAdjacentIndex (-1).
     */
     virtual const std::vector<int>& neighbours(int id) = 0;
+
+
+    /**
+    * Virtual destructor for the pure virtual class Adjacency
+    **/
+    virtual ~Adjacency() {}
   };
 }
 

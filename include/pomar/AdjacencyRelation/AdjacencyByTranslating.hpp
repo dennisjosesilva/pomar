@@ -43,6 +43,11 @@ namespace pomar
     */
     static std::unique_ptr<Adjacency> createAdjacency8(int width, int height);
 
+    /**
+    * Destructor 
+    */
+    ~AdjacencyByTranslating2D();
+
   private:
     int _width;
     int _height;
